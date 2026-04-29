@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitka Church of Christ — Member Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep-burgundy: #4A1423;
+  --burgundy: #6B1D30;
+  --burgundy-mid: #8B2840;
+  --crimson: #A63350;
+  --crimson-light: #C24F6A;
+  --deep-navy: #0F1E3A;
+  --navy: #1A3058;
+  --navy-mid: #244070;
+  --cobalt: #2A5299;
+  --cobalt-light: #3B6EC2;
+  --deep-amber: #7A4E0A;
+  --amber: #A8680F;
+  --amber-mid: #C87E1A;
+  --gold: #D4941C;
+  --gold-light: #E8B84B;
+  --gold-pale: #F9EFD8;
+  --deep-green: #1A3D2B;
+  --forest: #2A5C3F;
+  --sage: #3D7A55;
+  --sage-light: #5A9E72;
+  --parchment: #FAF5EC;
+  --parchment-dark: #F2E8D5;
+  --warm-linen: #EDE4D0;
+  --warm-stone: #D8CEB8;
+  --ink: #1C1008;
+  --ink-mid: #3D2E20;
+  --ink-light: #6B5C4A;
+  --ink-faint: #9A8B78;
+  --shadow-sm: 0 2px 8px rgba(28,16,8,0.10);
+  --shadow-md: 0 4px 20px rgba(28,16,8,0.14);
+  --shadow-lg: 0 10px 50px rgba(28,16,8,0.20);
+  --shadow-glow-gold: 0 4px 20px rgba(212,148,28,0.25);
+  --radius: 6px;
+  --radius-lg: 10px;
+  --tr: all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: var(--parchment);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   STAINED-GLASS PATTERN BACKGROUNDS
+═══════════════════════════════════════════════ */
+.glass-bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 600px 400px at 5% 20%, rgba(74,20,35,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 600px at 95% 60%, rgba(15,30,58,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 90%, rgba(42,82,153,0.03) 0%, transparent 70%);
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════ */
+.sidebar {
+  width: 252px;
+  min-width: 252px;
+  background: var(--deep-navy);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+  box-shadow: 4px 0 30px rgba(0,0,0,0.35);
+  overflow: hidden;
+}
+
+/* Decorative top arc */
+.sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 180px;
+  background: linear-gradient(180deg, var(--deep-burgundy) 0%, var(--navy) 100%);
+  z-index: 0;
+}
+
+/* Subtle cross watermark */
+.sidebar::after {
+  content: '✝';
+  position: absolute;
+  top: 14px; right: 16px;
+  font-size: 80px;
+  color: rgba(255,255,255,0.03);
+  z-index: 0;
+  line-height: 1;
+}
+
+.sidebar-logo {
+  padding: 24px 20px 18px;
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 13px;
+  border-bottom: 1px solid rgba(212,148,28,0.2);
+}
+
+.logo-emblem {
+  width: 46px; height: 46px;
+  background: linear-gradient(145deg, var(--amber-mid), var(--gold));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 3px 14px rgba(212,148,28,0.45), inset 0 1px 2px rgba(255,255,255,0.25);
+  border: 2px solid rgba(232,184,75,0.5);
+}
+
+.logo-text { flex: 1; }
+.logo-text h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; line-height: 1.25;
+  color: #fff; font-weight: 700; letter-spacing: 0.01em;
+}
+.logo-text h1 em { font-style: italic; color: var(--gold-light); }
+.logo-text span {
+  font-size: 9.5px; color: rgba(255,255,255,0.4);
+  text-transform: uppercase; letter-spacing: 0.14em; font-weight: 700;
+  display: block; margin-top: 3px;
+}
+
+.sidebar-member {
+  padding: 14px 20px;
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.member-ava {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--burgundy-mid), var(--crimson));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(212,148,28,0.35);
+}
+
+.member-info .mname { font-size: 12.5px; font-weight: 700; color: #fff; }
+.member-info .mrole { font-size: 10.5px; color: rgba(255,255,255,0.4); }
+
+nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1; }
+
+.nav-label {
+  padding: 12px 20px 4px;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 9px 20px;
+  cursor: pointer; color: rgba(255,255,255,0.6);
+  font-size: 13px; font-weight: 400;
+  transition: var(--tr);
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.nav-item:hover { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); }
+
+.nav-item.active {
+  background: rgba(212,148,28,0.12);
+  color: var(--gold-light);
+  border-left-color: var(--gold);
+  font-weight: 700;
+}
+
+.nav-item .ni { font-size: 15px; width: 20px; text-align: center; opacity: 0.8; }
+.nav-item.active .ni { opacity: 1; }
+
+.nbadge {
+  margin-left: auto;
+  background: var(--crimson);
+  color: #fff; font-size: 9.5px; font-weight: 700;
+  padding: 1px 6px; border-radius: 20px; min-width: 18px; text-align: center;
+}
+
+.nav-divider { height: 1px; background: rgba(255,255,255,0.06); margin: 6px 16px; }
+
+.sidebar-foot {
+  padding: 14px 20px; position: relative; z-index: 1;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.signout {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12.5px; color: rgba(255,255,255,0.35);
+  cursor: pointer; transition: var(--tr); padding: 5px 0;
+}
+.signout:hover { color: rgba(255,255,255,0.65); }
+
+/* ═══════════════════════════════════════════════
+   MAIN
+═══════════════════════════════════════════════ */
+.main { margin-left: 252px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  background: #fff;
+  height: 58px;
+  padding: 0 30px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--warm-linen);
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 12px rgba(28,16,8,0.07);
+}
+
+/* Decorative top stripe */
+.topbar::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--burgundy), var(--gold), var(--navy), var(--forest), var(--cobalt));
+}
+
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+
+.hamburger { display: none; cursor: pointer; font-size: 18px; color: var(--ink-mid); }
+
+.breadcrumb {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; color: var(--deep-navy);
+  font-weight: 700; font-style: italic;
+}
+.breadcrumb span { font-style: normal; color: var(--ink-faint); font-size: 15px; margin: 0 6px; }
+
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+
+.search-wrap {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--parchment);
+  border: 1px solid var(--warm-linen);
+  border-radius: 6px;
+  padding: 0 12px; height: 34px;
+  transition: var(--tr);
+}
+.search-wrap:focus-within { border-color: var(--gold); background: #fff; }
+.search-wrap input {
+  border: none; background: transparent; outline: none;
+  font-family: 'Lato', sans-serif; font-size: 12.5px;
+  color: var(--ink); width: 160px;
+}
+.search-wrap input::placeholder { color: var(--ink-faint); }
+.search-ico { font-size: 13px; color: var(--ink-faint); }
+
+.icon-btn {
+  width: 34px; height: 34px;
+  background: var(--parchment); border: 1px solid var(--warm-linen);
+  border-radius: 6px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; transition: var(--tr); position: relative;
+}
+.icon-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+.icon-btn .dot {
+  position: absolute; top: 5px; right: 5px;
+  width: 7px; height: 7px; background: var(--crimson);
+  border-radius: 50%; border: 1.5px solid #fff;
+}
+
+.content { padding: 26px 30px; flex: 1; position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════════
+   SECTIONS
+═══════════════════════════════════════════════ */
+.section { display: none; animation: fadeIn 0.25s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ═══════════════════════════════════════════════
+   REUSABLE COMPONENTS
+═══════════════════════════════════════════════ */
+
+/* Cards */
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--warm-linen);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-hd {
+  padding: 16px 22px 13px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--warm-linen);
+}
+
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 700; color: var(--deep-navy);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.card-title::before {
+  content: '';
+  display: inline-block; width: 3px; height: 16px;
+  background: linear-gradient(180deg, var(--gold), var(--amber));
+  border-radius: 2px; flex-shrink: 0;
+}
+
+.card-body { padding: 18px 22px; }
+
+/* Buttons */
+.btn {
+  padding: 7px 16px; border-radius: var(--radius);
+  font-family: 'Lato', sans-serif; font-size: 12.5px; font-weight: 700;
+  cursor: pointer; transition: var(--tr); border: none;
+  display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0.02em;
+}
+.btn-gold {
+  background: linear-gradient(135deg, var(--amber-mid), var(--gold));
+  color: #fff; box-shadow: 0 2px 10px rgba(168,104,15,0.3);
+}
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(168,104,15,0.4); }
+.btn-outline {
+  background: transparent; border: 1.5px solid var(--warm-stone);
+  color: var(--ink-mid);
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--amber); }
+.btn-ghost { background: transparent; color: var(--ink-light); padding: 5px 10px; }
+.btn-ghost:hover { color: var(--burgundy); }
+.btn-sm { padding: 5px 12px; font-size: 11.5px; }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-navy:hover { background: var(--navy-mid); }
+.btn-forest { background: var(--forest); color: #fff; }
+.btn-forest:hover { background: var(--sage); }
+.btn-danger { background: var(--burgundy); color: #fff; }
+
+/* Tags */
+.tag {
+  display: inline-block; padding: 2px 9px;
+  border-radius: 20px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.tag-worship { background: rgba(106,29,48,0.1); color: var(--burgundy-mid); border: 1px solid rgba(106,29,48,0.15); }
+.tag-study   { background: rgba(26,48,88,0.09); color: var(--navy);         border: 1px solid rgba(26,48,88,0.12); }
+.tag-service { background: rgba(26,61,43,0.09); color: var(--forest);       border: 1px solid rgba(26,61,43,0.12); }
+.tag-youth   { background: rgba(42,82,153,0.1); color: var(--cobalt);       border: 1px solid rgba(42,82,153,0.12); }
+.tag-event   { background: rgba(168,104,15,0.1); color: var(--amber);       border: 1px solid rgba(168,104,15,0.15); }
+
+/* Form */
+.form-lbl {
+  display: block; font-size: 10.5px; font-weight: 700;
+  color: var(--ink-light); margin-bottom: 5px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.form-inp, .form-sel, .form-area {
+  width: 100%; padding: 9px 13px;
+  border: 1.5px solid var(--warm-stone); border-radius: var(--radius);
+  font-family: 'Lato', sans-serif; font-size: 13px; outline: none;
+  color: var(--ink); background: #fff; transition: var(--tr);
+  appearance: none;
+}
+.form-inp:focus, .form-sel:focus, .form-area:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(212,148,28,0.12);
+}
+.form-sel { cursor: pointer; }
+.form-area { resize: vertical; }
+.form-group { margin-bottom: 15px; }
+.form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row { display: flex; gap: 10px; }
+
+/* Divider */
+.divider { height: 1px; background: var(--warm-linen); margin: 14px 0; }
+
+/* ═══════════════════════════════════════════════
+   BANNER / VERSE
+═══════════════════════════════════════════════ */
+.verse-banner {
+  background: linear-gradient(120deg, var(--deep-navy) 0%, var(--navy) 55%, var(--deep-burgundy) 100%);
+  border-radius: var(--radius-lg);
+  padding: 22px 28px;
+  color: #fff; margin-bottom: 22px;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(212,148,28,0.2);
+  box-shadow: var(--shadow-md);
+}
+
+/* Stained glass geometry */
+.verse-banner::before {
+  content: '';
+  position: absolute; top: -30px; right: -20px;
+  width: 180px; height: 180px;
+  background: radial-gradient(ellipse, rgba(212,148,28,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.verse-banner::after {
+  content: '✝';
+  position: absolute; right: 28px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 64px; color: rgba(212,148,28,0.12);
+  line-height: 1;
+}
+
+.verse-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 17px; line-height: 1.65;
+  max-width: 680px; position: relative;
+}
+
+/* Gold quotation mark */
+.verse-text::before {
+  content: '\201C';
+  font-size: 60px; line-height: 0;
+  color: var(--gold); opacity: 0.5;
+  position: absolute; top: 14px; left: -12px;
+  font-style: normal;
+}
+
+.verse-ref {
+  font-size: 11px; color: var(--gold-light);
+  margin-top: 8px; letter-spacing: 0.08em;
+  font-weight: 700; text-transform: uppercase;
+}
+
+/* Day / Greeting */
+.greeting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.greeting-text h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700; color: var(--deep-navy);
+  line-height: 1.1;
+}
+.greeting-text p { font-size: 13px; color: var(--ink-light); margin-top: 3px; }
+.date-badge {
+  background: #fff; border: 1px solid var(--warm-linen);
+  border-radius: var(--radius); padding: 8px 16px;
+  text-align: center; box-shadow: var(--shadow-sm);
+}
+.date-badge .db-day { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--deep-navy); line-height: 1; }
+.date-badge .db-month { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); }
+.date-badge .db-year { font-size: 10px; color: var(--ink-faint); }
+
+/* ═══════════════════════════════════════════════
+   STATS GRID
+═══════════════════════════════════════════════ */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 14px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  background: #fff; border-radius: var(--radius-lg);
+  padding: 18px 20px; border: 1px solid var(--warm-linen);
+  box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+}
+
+.sc-accent {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.sc-accent.bur { background: linear-gradient(90deg, var(--deep-burgundy), var(--crimson-light)); }
+.sc-accent.nav { background: linear-gradient(90deg, var(--deep-navy), var(--cobalt-light)); }
+.sc-accent.gld { background: linear-gradient(90deg, var(--amber), var(--gold-light)); }
+.sc-accent.for { background: linear-gradient(90deg, var(--deep-green), var(--sage-light)); }
+
+.sc-icon { font-size: 22px; margin-bottom: 9px; display: block; }
+.sc-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 700; color: var(--deep-navy);
+  line-height: 1;
+}
+.sc-lbl { font-size: 11px; color: var(--ink-light); margin-top: 3px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.sc-sub { font-size: 11px; color: var(--sage); margin-top: 5px; font-weight: 700; }
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD GRID
+═══════════════════════════════════════════════ */
+.dash-grid { display: grid; grid-template-columns: 1fr 330px; gap: 18px; }
+
+/* Events */
+.ev-list { display: flex; flex-direction: column; gap: 8px; }
+
+.ev-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 13px 14px; border-radius: var(--radius);
+  border: 1px solid var(--parchment-dark);
+  background: var(--parchment); cursor: pointer; transition: var(--tr);
+}
+.ev-item:hover { border-color: var(--gold); background: var(--gold-pale); }
+
+.ev-date {
+  min-width: 44px; background: var(--deep-navy);
+  border-radius: var(--radius); text-align: center;
+  padding: 5px 6px; flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(15,30,58,0.25);
+}
+.ev-date .evm { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-light); }
+.ev-date .evd { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1; }
+
+.ev-info { flex: 1; }
+.ev-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.ev-meta { font-size: 11.5px; color: var(--ink-light); margin-top: 2px; }
+
+/* Quick links */
+.ql-list { display: flex; flex-direction: column; gap: 8px; }
+.ql {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 14px; border-radius: var(--radius);
+  background: var(--parchment); border: 1px solid var(--parchment-dark);
+  cursor: pointer; transition: var(--tr);
+}
+.ql:hover { border-color: var(--gold); transform: translateX(3px); box-shadow: var(--shadow-sm); }
+.ql-ico {
+  width: 34px; height: 34px; border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.ql-ico.bur { background: rgba(74,20,35,0.09); }
+.ql-ico.nav { background: rgba(15,30,58,0.09); }
+.ql-ico.gld { background: rgba(168,104,15,0.1); }
+.ql-ico.for { background: rgba(26,61,43,0.09); }
+.ql-txt .qt { font-size: 13px; font-weight: 700; color: var(--ink); }
+.ql-txt .qs { font-size: 11px; color: var(--ink-faint); }
+.ql-arr { margin-left: auto; color: var(--ink-faint); font-size: 14px; font-weight: 700; }
+
+/* Announcements */
+.ann-item {
+  padding: 12px 0; border-bottom: 1px solid var(--warm-linen);
+}
+.ann-item:last-child { border-bottom: none; padding-bottom: 0; }
+.ann-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.ann-body { font-size: 12px; color: var(--ink-light); margin-top: 3px; line-height: 1.4; }
+.ann-date { font-size: 10.5px; color: var(--gold); font-weight: 700; margin-top: 5px; }
+
+/* ═══════════════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════════════ */
+.cal-wrap { display: grid; grid-template-columns: 1fr 290px; gap: 18px; }
+
+.cal-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.cal-month {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--deep-navy);
+}
+.cal-nav-btns { display: flex; gap: 5px; }
+.cal-nb {
+  width: 30px; height: 30px;
+  background: var(--parchment); border: 1px solid var(--warm-linen);
+  border-radius: var(--radius); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; font-size: 14px;
+  transition: var(--tr);
+}
+.cal-nb:hover { background: var(--gold-pale); border-color: var(--gold); }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 3px; }
+.cal-wday {
+  text-align: center; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink-faint); padding: 7px 0;
+}
+
+.cal-day {
+  aspect-ratio: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  border-radius: 5px; cursor: pointer; font-size: 12.5px;
+  font-weight: 600; transition: var(--tr); position: relative; gap: 1px;
+}
+.cal-day:hover { background: var(--gold-pale); }
+.cal-day.other { color: var(--ink-faint); opacity: 0.4; }
+.cal-day.today {
+  background: var(--deep-navy); color: #fff; font-weight: 700;
+  box-shadow: 0 2px 10px rgba(15,30,58,0.3);
+}
+.cal-day.today:hover { background: var(--navy-mid); }
+.cal-day.has-event::after {
+  content: ''; width: 4px; height: 4px;
+  background: var(--gold); border-radius: 50%;
+  position: absolute; bottom: 3px;
+}
+.cal-day.today.has-event::after { background: var(--gold-light); }
+
+.upcoming { display: flex; flex-direction: column; gap: 9px; }
+.ue {
+  padding: 12px 14px; border-radius: var(--radius);
+  background: var(--parchment); border: 1px solid var(--parchment-dark);
+  border-left: 3px solid var(--gold); cursor: pointer; transition: var(--tr);
+}
+.ue:hover { box-shadow: var(--shadow-sm); }
+.ue.bur { border-left-color: var(--burgundy); }
+.ue.nav { border-left-color: var(--navy); }
+.ue.for { border-left-color: var(--forest); }
+.ue.cob { border-left-color: var(--cobalt); }
+.ue-name { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.ue-time { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+.ue-rsvp { font-size: 11px; color: var(--cobalt); font-weight: 700; margin-top: 5px; cursor: pointer; }
+
+/* Legend */
+.cal-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.cl-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink-light); }
+.cl-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ═══════════════════════════════════════════════
+   DIRECTORY
+═══════════════════════════════════════════════ */
+.dir-controls {
+  display: flex; gap: 8px; margin-bottom: 18px;
+  align-items: center; flex-wrap: wrap;
+}
+.fchip {
+  padding: 5px 14px; border-radius: 20px; font-size: 11.5px;
+  font-weight: 700; cursor: pointer; transition: var(--tr);
+  border: 1.5px solid var(--warm-stone); color: var(--ink-mid);
+  background: #fff;
+}
+.fchip.active { background: var(--deep-navy); color: #fff; border-color: var(--deep-navy); }
+.fchip:hover:not(.active) { border-color: var(--gold); color: var(--amber); }
+
+.mem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; }
+
+.mem-card {
+  background: #fff; border-radius: var(--radius-lg); padding: 20px 16px;
+  text-align: center; border: 1px solid var(--warm-linen);
+  box-shadow: var(--shadow-sm); transition: var(--tr); cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.mem-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 36px;
+  background: linear-gradient(180deg, var(--parchment-dark), transparent);
+}
+.mem-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--gold); }
+
+.mem-ava {
+  width: 58px; height: 58px; border-radius: 50%; margin: 0 auto 11px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: #fff;
+  position: relative; z-index: 1;
+  border: 2px solid var(--warm-linen);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+.mem-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 700; color: var(--deep-navy);
+}
+.mem-role { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+.mem-since { font-size: 10px; color: var(--ink-faint); margin-top: 5px; }
+.mem-acts { display: flex; gap: 5px; justify-content: center; margin-top: 11px; }
+
+/* ═══════════════════════════════════════════════
+   GIVING
+═══════════════════════════════════════════════ */
+.giving-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
+
+.amt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
+
+.amt-btn {
+  padding: 14px 8px; border: 2px solid var(--warm-stone);
+  border-radius: var(--radius); background: #fff; cursor: pointer;
+  text-align: center; transition: var(--tr);
+  font-family: 'Cormorant Garamond', serif;
+}
+.amt-btn:hover { border-color: var(--gold); background: var(--gold-pale); }
+.amt-btn.sel { border-color: var(--amber); background: var(--gold-pale); }
+.amt-val { font-size: 22px; font-weight: 700; color: var(--deep-navy); display: block; }
+.amt-lbl { font-size: 10px; color: var(--ink-faint); display: block; font-family: 'Lato', sans-serif; margin-top: 1px; }
+
+.fund-opts { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+.fund-opt {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 14px; border: 1.5px solid var(--warm-stone);
+  border-radius: var(--radius); cursor: pointer; transition: var(--tr);
+}
+.fund-opt:hover { border-color: var(--gold); }
+.fund-opt.sel { border-color: var(--amber); background: var(--gold-pale); }
+.fund-radio {
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 2px solid var(--warm-stone); flex-shrink: 0; transition: var(--tr);
+}
+.fund-opt.sel .fund-radio { border-color: var(--amber); background: var(--amber); }
+.fund-name { font-size: 13px; font-weight: 700; color: var(--ink); }
+.fund-desc { font-size: 11px; color: var(--ink-faint); }
+
+.freq-row { display: flex; gap: 7px; margin-bottom: 18px; }
+.freq-btn {
+  flex: 1; padding: 8px; border: 1.5px solid var(--warm-stone);
+  border-radius: var(--radius); background: #fff; cursor: pointer;
+  font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 700;
+  text-align: center; transition: var(--tr); color: var(--ink-mid);
+}
+.freq-btn:hover { border-color: var(--gold); color: var(--amber); }
+.freq-btn.sel { border-color: var(--amber); color: var(--amber); background: var(--gold-pale); }
+
+.giving-total-bar {
+  background: var(--gold-pale); border: 1px solid rgba(168,104,15,0.18);
+  border-radius: var(--radius); padding: 13px 16px;
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+}
+.gtb-lbl { font-size: 12px; color: var(--ink-mid); font-weight: 700; }
+.gtb-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700; color: var(--deep-navy);
+}
+
+.total-card {
+  background: linear-gradient(135deg, var(--deep-navy), var(--navy-mid));
+  border-radius: var(--radius-lg); padding: 20px; color: #fff;
+  text-align: center; margin-bottom: 14px;
+  box-shadow: var(--shadow-md);
+  position: relative; overflow: hidden;
+}
+.total-card::before {
+  content: '✝';
+  position: absolute; right: 12px; bottom: -6px;
+  font-size: 60px; color: rgba(255,255,255,0.05);
+}
+.tc-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; }
+.tc-val { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; margin: 3px 0; }
+.tc-period { font-size: 11px; opacity: 0.5; }
+
+.gh-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 0; border-bottom: 1px solid var(--warm-linen);
+}
+.gh-item:last-child { border-bottom: none; }
+.gh-fund { font-size: 13px; font-weight: 700; color: var(--ink); }
+.gh-date { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
+.gh-amt { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--forest); font-weight: 700; }
+
+/* ═══════════════════════════════════════════════
+   MESSAGES
+═══════════════════════════════════════════════ */
+.msg-wrap {
+  display: grid; grid-template-columns: 268px 1fr; gap: 0;
+  height: calc(100vh - 152px);
+  border: 1px solid var(--warm-linen); border-radius: var(--radius-lg); overflow: hidden;
+}
+.msg-left { background: var(--parchment); border-right: 1px solid var(--warm-linen); display: flex; flex-direction: column; }
+.msg-left-hd {
+  padding: 14px 16px; border-bottom: 1px solid var(--warm-linen);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.msg-left-title { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 700; color: var(--deep-navy); }
+.msg-threads { flex: 1; overflow-y: auto; }
+.mt {
+  padding: 12px 14px; cursor: pointer; transition: var(--tr);
+  border-bottom: 1px solid rgba(218,210,184,0.4);
+  display: flex; gap: 9px; align-items: flex-start;
+}
+.mt:hover { background: rgba(212,148,28,0.06); }
+.mt.active { background: rgba(212,148,28,0.1); border-left: 3px solid var(--gold); }
+.mt-ava {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 700; color: #fff;
+}
+.mt-info { flex: 1; min-width: 0; }
+.mt-name { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.mt-prev { font-size: 11px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+.mt-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.mt-time { font-size: 10px; color: var(--ink-faint); }
+.mt-unread { width: 7px; height: 7px; background: var(--crimson); border-radius: 50%; }
+.msg-right { background: #fff; display: flex; flex-direction: column; }
+.msg-right-hd {
+  padding: 14px 18px; border-bottom: 1px solid var(--warm-linen);
+  display: flex; align-items: center; gap: 11px;
+}
+.msg-chat-nm { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; color: var(--deep-navy); }
+.msg-chat-st { font-size: 11px; color: var(--sage); }
+.msg-body { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.bubble { max-width: 68%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+.bubble.recv { background: var(--parchment); border: 1px solid var(--warm-linen); align-self: flex-start; border-bottom-left-radius: 3px; }
+.bubble.sent { background: var(--deep-navy); color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+.btime { font-size: 10px; color: var(--ink-faint); margin-top: 3px; }
+.btime.sent { text-align: right; }
+.msg-compose {
+  padding: 12px 14px; border-top: 1px solid var(--warm-linen);
+  display: flex; gap: 8px; align-items: flex-end;
+}
+.msg-inp {
+  flex: 1; background: var(--parchment); border: 1px solid var(--warm-linen);
+  border-radius: 8px; padding: 9px 13px;
+  font-family: 'Lato', sans-serif; font-size: 12.5px;
+  resize: none; outline: none; transition: var(--tr); line-height: 1.5; max-height: 90px;
+}
+.msg-inp:focus { border-color: var(--gold); background: #fff; }
+.msg-send {
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--amber-mid), var(--gold));
+  border: none; border-radius: 7px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+  transition: var(--tr); box-shadow: 0 2px 8px rgba(168,104,15,0.3);
+}
+.msg-send:hover { transform: scale(1.05); }
+
+/* ═══════════════════════════════════════════════
+   NOTIFICATIONS
+═══════════════════════════════════════════════ */
+.notif-list { display: flex; flex-direction: column; gap: 9px; }
+.notif {
+  display: flex; gap: 13px; padding: 15px 16px;
+  background: #fff; border-radius: var(--radius-lg);
+  border: 1px solid var(--warm-linen); box-shadow: var(--shadow-sm); transition: var(--tr);
+}
+.notif:hover { border-color: var(--gold); }
+.notif.unread { border-left: 3px solid var(--gold); background: var(--gold-pale); }
+.notif-ico {
+  width: 40px; height: 40px; border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0;
+}
+.ni-bur { background: rgba(74,20,35,0.09); }
+.ni-gld { background: rgba(168,104,15,0.1); }
+.ni-nav { background: rgba(15,30,58,0.09); }
+.ni-for { background: rgba(26,61,43,0.09); }
+.ni-cob { background: rgba(42,82,153,0.09); }
+.notif-cnt { flex: 1; }
+.notif-title { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.notif-msg { font-size: 12px; color: var(--ink-light); margin-top: 3px; line-height: 1.4; }
+.notif-time { font-size: 10.5px; color: var(--gold); margin-top: 5px; font-weight: 700; }
+.notif-x { align-self: flex-start; cursor: pointer; font-size: 17px; color: var(--ink-faint); padding: 1px; transition: var(--tr); }
+.notif-x:hover { color: var(--burgundy); }
+
+/* ═══════════════════════════════════════════════
+   MINISTRIES
+═══════════════════════════════════════════════ */
+.min-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 18px; }
+.min-card {
+  background: #fff; border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--warm-linen); transition: var(--tr);
+}
+.min-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--gold); }
+.min-banner { height: 80px; display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; }
+.min-body { padding: 16px; }
+.min-name { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 700; color: var(--deep-navy); }
+.min-desc { font-size: 12px; color: var(--ink-light); margin-top: 5px; line-height: 1.5; }
+.min-meta { display: flex; gap: 14px; margin-top: 10px; }
+.min-meta span { font-size: 11px; color: var(--ink-faint); }
+.min-foot {
+  padding: 12px 16px; border-top: 1px solid var(--warm-linen);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.min-lead { font-size: 11.5px; color: var(--ink-faint); }
+.enrolled { background: rgba(26,61,43,0.1); color: var(--forest); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+
+/* ═══════════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════════ */
+.prof-wrap { display: grid; grid-template-columns: 262px 1fr; gap: 20px; }
+.prof-card { text-align: center; padding: 28px 20px; }
+.prof-ava {
+  width: 82px; height: 82px; border-radius: 50%; margin: 0 auto 13px;
+  background: linear-gradient(135deg, var(--burgundy), var(--crimson));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 700; color: #fff;
+  border: 3px solid var(--warm-linen);
+  box-shadow: 0 4px 18px rgba(74,20,35,0.22);
+}
+.prof-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--deep-navy); }
+.prof-role { font-size: 11.5px; color: var(--ink-faint); margin-top: 3px; }
+.prof-badges { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 12px 0; }
+.pb { padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+.pb-bur { background: rgba(74,20,35,0.09); color: var(--burgundy-mid); }
+.pb-nav { background: rgba(15,30,58,0.09); color: var(--navy); }
+.pb-for { background: rgba(26,61,43,0.09); color: var(--forest); }
+.prof-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; border-top: 1px solid var(--warm-linen); padding-top: 14px; }
+.ps-box { text-align: center; }
+.ps-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--deep-navy); }
+.ps-lbl { font-size: 10px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+.prof-tabs { display: flex; gap: 3px; border-bottom: 2px solid var(--warm-linen); margin-bottom: 18px; }
+.ptab { padding: 9px 16px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-light); transition: var(--tr); border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.ptab.active { color: var(--amber); border-bottom-color: var(--amber); }
+.toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 14px; background: var(--parchment); border-radius: var(--radius);
+  border: 1px solid var(--parchment-dark); margin-bottom: 8px;
+}
+.toggle-row .tr-title { font-size: 13px; font-weight: 700; color: var(--ink); }
+.toggle-row .tr-sub { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+.tog {
+  position: relative; display: inline-block; width: 42px; height: 22px; cursor: pointer; flex-shrink: 0;
+}
+.tog input { opacity: 0; width: 0; height: 0; }
+.tog-track {
+  position: absolute; inset: 0; border-radius: 11px;
+  background: var(--warm-stone); transition: 0.3s;
+}
+.tog input:checked + .tog-track { background: var(--forest); }
+.tog-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 18px; height: 18px; background: #fff; border-radius: 50%;
+  transition: 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.tog input:checked ~ .tog-thumb { transform: translateX(20px); }
+
+/* ═══════════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,20,30,0.65);
+  backdrop-filter: blur(3px);
+  z-index: 200; display: none;
+  align-items: center; justify-content: center;
+}
+.overlay.open { display: flex; }
+.modal {
+  background: #fff; border-radius: var(--radius-lg);
+  width: 90%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: mIn 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes mIn { from { opacity:0; transform: translateY(18px) scale(0.97); } to { opacity:1; transform: none; } }
+.modal-hd {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--warm-linen);
+  display: flex; align-items: center; justify-content: space-between;
+}
+/* Stained-glass stripe on modal */
+.modal-hd::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  background: linear-gradient(90deg, var(--burgundy), var(--gold), var(--cobalt));
+}
+.modal-hd { position: relative; }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--deep-navy); }
+.modal-x { cursor: pointer; font-size: 20px; color: var(--ink-faint); transition: var(--tr); }
+.modal-x:hover { color: var(--burgundy); }
+.modal-bd { padding: 18px 22px; }
+.modal-ft { padding: 14px 22px; border-top: 1px solid var(--warm-linen); display: flex; gap: 8px; justify-content: flex-end; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--warm-stone); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+</style>
+</head>
+<body>
+<div class="glass-bg"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-emblem">✝</div>
+    <div class="logo-text">
+      <h1>Sitka<br><em>Church of Christ</em></h1>
+      <span>Member Portal</span>
+    </div>
+  </div>
+
+  <div class="sidebar-member">
+    <div class="member-ava">RW</div>
+    <div class="member-info">
+      <span class="mname">Robert Williams</span>
+      <span class="mrole">Elder · Worship Ministry</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-label">Main</div>
+    <div class="nav-item active" onclick="nav('dashboard',this)"><span class="ni">🏠</span>Dashboard</div>
+    <div class="nav-item" onclick="nav('calendar',this)"><span class="ni">📅</span>Calendar &amp; Events</div>
+    <div class="nav-item" onclick="nav('directory',this)"><span class="ni">👥</span>Member Directory</div>
+
+    <div class="nav-label">Community</div>
+    <div class="nav-item" onclick="nav('ministry',this)"><span class="ni">✝</span>Ministries</div>
+    <div class="nav-item" onclick="nav('messages',this)"><span class="ni">✉️</span>Messages<span class="nbadge">3</span></div>
+    <div class="nav-item" onclick="nav('notifications',this)"><span class="ni">🔔</span>Notifications<span class="nbadge">5</span></div>
+
+    <div class="nav-label">Stewardship</div>
+    <div class="nav-item" onclick="nav('giving',this)"><span class="ni">🤲</span>Giving</div>
+
+    <div class="nav-divider"></div>
+    <div class="nav-item" onclick="nav('profile',this)"><span class="ni">👤</span>My Profile</div>
+  </nav>
+
+  <div class="sidebar-foot">
+    <div class="signout"><span>→</span> Sign Out</div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="breadcrumb" id="breadcrumb">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input type="text" placeholder="Search members, events…">
+      </div>
+      <div class="icon-btn" onclick="nav('notifications',null)">🔔<div class="dot"></div></div>
+      <div class="icon-btn">⚙️</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ════ DASHBOARD ════ -->
+    <section id="sec-dashboard" class="section active">
+      <div class="greeting-row">
+        <div class="greeting-text">
+          <h2>Peace be with you, Robert.</h2>
+          <p>Here's what's happening at Sitka Church of Christ this week.</p>
+        </div>
+        <div class="date-badge">
+          <div class="db-month">May</div>
+          <div class="db-day">27</div>
+          <div class="db-year">2025</div>
+        </div>
+      </div>
+
+      <div class="verse-banner">
+        <div class="verse-text">I can do all things through Christ who strengthens me.</div>
+        <div class="verse-ref">— Philippians 4:13 &nbsp;·&nbsp; Verse of the Week</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="sc-accent bur"></div><span class="sc-icon">👥</span><div class="sc-val">312</div><div class="sc-lbl">Active Members</div><div class="sc-sub">↑ 8 this month</div></div>
+        <div class="stat-card"><div class="sc-accent nav"></div><span class="sc-icon">📅</span><div class="sc-val">6</div><div class="sc-lbl">Upcoming Events</div><div class="sc-sub">Next: Sunday Worship</div></div>
+        <div class="stat-card"><div class="sc-accent gld"></div><span class="sc-icon">🤲</span><div class="sc-val">$9,420</div><div class="sc-lbl">Given This Month</div><div class="sc-sub">↑ 14% vs last month</div></div>
+        <div class="stat-card"><div class="sc-accent for"></div><span class="sc-icon">✝</span><div class="sc-val">9</div><div class="sc-lbl">Active Ministries</div><div class="sc-sub">2 open sign-ups</div></div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">Upcoming Events</div>
+            <button class="btn btn-outline btn-sm" onclick="nav('calendar',null)">Full Calendar →</button>
+          </div>
+          <div class="card-body">
+            <div class="ev-list">
+              <div class="ev-item" onclick="openEvtModal('Lord\'s Supper & Worship','Jun 1','9:30 AM','Auditorium','bur')">
+                <div class="ev-date"><div class="evm">JUN</div><div class="evd">1</div></div>
+                <div class="ev-info"><div class="ev-name">Lord's Supper &amp; Worship</div><div class="ev-meta">🕐 9:30 AM · Auditorium</div><span class="tag tag-worship">Worship</span></div>
+              </div>
+              <div class="ev-item" onclick="openEvtModal('Wednesday Bible Class','Jun 4','7:00 PM','Fellowship Hall','nav')">
+                <div class="ev-date"><div class="evm">JUN</div><div class="evd">4</div></div>
+                <div class="ev-info"><div class="ev-name">Wednesday Bible Class</div><div class="ev-meta">🕐 7:00 PM · Fellowship Hall</div><span class="tag tag-study">Bible Study</span></div>
+              </div>
+              <div class="ev-item" onclick="openEvtModal('Youth Devo Night','Jun 6','6:30 PM','Youth Room','cob')">
+                <div class="ev-date"><div class="evm">JUN</div><div class="evd">6</div></div>
+                <div class="ev-info"><div class="ev-name">Youth Devo Night</div><div class="ev-meta">🕐 6:30 PM · Youth Room</div><span class="tag tag-youth">Youth</span></div>
+              </div>
+              <div class="ev-item" onclick="openEvtModal('Community Service Day','Jun 7','8:00 AM','Sitka Harbor','for')">
+                <div class="ev-date"><div class="evm">JUN</div><div class="evd">7</div></div>
+                <div class="ev-info"><div class="ev-name">Community Service Day</div><div class="ev-meta">🕐 8:00 AM · Sitka Harbor</div><span class="tag tag-service">Service</span></div>
+              </div>
+              <div class="ev-item" onclick="openEvtModal('Ladies\' Bible Class','Jun 10','10:00 AM','Room 3','gld')">
+                <div class="ev-date"><div class="evm">JUN</div><div class="evd">10</div></div>
+                <div class="ev-info"><div class="ev-name">Ladies' Bible Class</div><div class="ev-meta">🕐 10:00 AM · Room 3</div><span class="tag tag-study">Bible Study</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Quick Actions</div></div>
+            <div class="card-body" style="padding-top:13px">
+              <div class="ql-list">
+                <div class="ql" onclick="nav('giving',null)"><div class="ql-ico gld">🤲</div><div class="ql-txt"><div class="qt">Give Online</div><div class="qs">Contribution &amp; special offerings</div></div><div class="ql-arr">›</div></div>
+                <div class="ql" onclick="nav('ministry',null)"><div class="ql-ico nav">✝</div><div class="ql-txt"><div class="qt">Join a Ministry</div><div class="qs">2 open registrations</div></div><div class="ql-arr">›</div></div>
+                <div class="ql" onclick="openPrayerModal()"><div class="ql-ico bur">🙏</div><div class="ql-txt"><div class="qt">Prayer Request</div><div class="qs">Share with our prayer team</div></div><div class="ql-arr">›</div></div>
+                <div class="ql" onclick="nav('directory',null)"><div class="ql-ico for">👥</div><div class="ql-txt"><div class="qt">Member Directory</div><div class="qs">Find &amp; connect with brethren</div></div><div class="ql-arr">›</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Announcements</div></div>
+            <div class="card-body" style="padding-top:4px">
+              <div class="ann-item">
+                <div class="ann-title">VBS Registration Open — July 14–18</div>
+                <div class="ann-body">Vacation Bible School sign-up is open for children ages 4–12. Register by June 30. Helpers also needed!</div>
+                <div class="ann-date">Posted 2 days ago</div>
+              </div>
+              <div class="ann-item">
+                <div class="ann-title">New Series: "Walking by Faith"</div>
+                <div class="ann-body">Beginning June 1st — a 6-week study through Hebrews. Workbooks available at the information table.</div>
+                <div class="ann-date">Posted 4 days ago</div>
+              </div>
+              <div class="ann-item" style="border-bottom:none;padding-bottom:0">
+                <div class="ann-title">Sitka Food Pantry Needs Volunteers</div>
+                <div class="ann-body">We serve every 2nd Saturday. Sign up in the foyer or contact Deacon Tom Bradford.</div>
+                <div class="ann-date">Posted 1 week ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ CALENDAR ════ -->
+    <section id="sec-calendar" class="section">
+      <div class="cal-wrap">
+        <div class="card">
+          <div class="card-body">
+            <div class="cal-hd">
+              <div class="cal-month">June 2025</div>
+              <div style="display:flex;align-items:center;gap:14px">
+                <div class="cal-legend">
+                  <div class="cl-item"><div class="cl-dot" style="background:var(--burgundy)"></div>Worship</div>
+                  <div class="cl-item"><div class="cl-dot" style="background:var(--navy)"></div>Study</div>
+                  <div class="cl-item"><div class="cl-dot" style="background:var(--forest)"></div>Service</div>
+                  <div class="cl-item"><div class="cl-dot" style="background:var(--cobalt)"></div>Youth</div>
+                </div>
+                <div class="cal-nav-btns"><div class="cal-nb">‹</div><div class="cal-nb">›</div></div>
+              </div>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-wday">Sun</div><div class="cal-wday">Mon</div><div class="cal-wday">Tue</div><div class="cal-wday">Wed</div><div class="cal-wday">Thu</div><div class="cal-wday">Fri</div><div class="cal-wday">Sat</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Worship & Lord\'s Supper','Jun 1','9:30 AM','Auditorium','bur')" title="Worship">1</div>
+              <div class="cal-day">2</div><div class="cal-day">3</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Wednesday Bible Class','Jun 4','7 PM','Fellowship Hall','nav')">4</div>
+              <div class="cal-day">5</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Youth Devo Night','Jun 6','6:30 PM','Youth Room','cob')">6</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Community Service Day','Jun 7','8 AM','Harbor','for')">7</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Worship','Jun 8','9:30 AM','Auditorium','bur')">8</div>
+              <div class="cal-day">9</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Ladies\' Bible Class','Jun 10','10 AM','Room 3','nav')">10</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Wednesday Bible Class','Jun 11','7 PM','Fellowship Hall','nav')">11</div>
+              <div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div>
+              <div class="cal-day has-event" onclick="openEvtModal('Worship','Jun 15','9:30 AM','Auditorium','bur')">15</div>
+              <div class="cal-day">16</div><div class="cal-day">17</div>
+              <div class="cal-day has-event">18</div>
+              <div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div>
+              <div class="cal-day has-event today">22</div>
+              <div class="cal-day">23</div><div class="cal-day">24</div>
+              <div class="cal-day has-event">25</div>
+              <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div>
+              <div class="cal-day has-event">29</div>
+              <div class="cal-day">30</div>
+              <div class="cal-day other">1</div><div class="cal-day other">2</div><div class="cal-day other">3</div><div class="cal-day other">4</div><div class="cal-day other">5</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title">This Week</div>
+              <button class="btn btn-gold btn-sm">+ Add Event</button>
+            </div>
+            <div class="card-body" style="padding-top:12px">
+              <div class="upcoming">
+                <div class="ue bur" onclick="openEvtModal('Lord\'s Supper & Worship','Jun 22','9:30 AM','Auditorium','bur')">
+                  <div class="ue-name">Lord's Supper &amp; Worship</div>
+                  <div class="ue-time">📅 Sunday · 9:30 AM</div>
+                  <div class="ue-rsvp">✓ Attending</div>
+                </div>
+                <div class="ue nav" onclick="openEvtModal('Wednesday Bible Class','Jun 25','7:00 PM','Fellowship Hall','nav')">
+                  <div class="ue-name">Wednesday Bible Class</div>
+                  <div class="ue-time">📅 Wednesday · 7:00 PM</div>
+                  <div class="ue-rsvp">RSVP →</div>
+                </div>
+                <div class="ue for">
+                  <div class="ue-name">Food Pantry Service</div>
+                  <div class="ue-time">📅 Saturday · 8:00 AM</div>
+                  <div class="ue-rsvp">✓ Volunteering</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ DIRECTORY ════ -->
+    <section id="sec-directory" class="section">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-body" style="padding:14px 20px">
+          <div class="dir-controls">
+            <div class="fchip active">All Members</div>
+            <div class="fchip">Elders</div>
+            <div class="fchip">Deacons</div>
+            <div class="fchip">Worship Ministry</div>
+            <div class="fchip">Youth Ministry</div>
+            <div class="fchip">Women's Class</div>
+            <div style="margin-left:auto">
+              <input class="form-inp" style="width:190px;padding:7px 12px" placeholder="🔍 Search members…" oninput="filterMem(this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mem-grid" id="mem-grid"></div>
+    </section>
+
+    <!-- ════ GIVING ════ -->
+    <section id="sec-giving" class="section">
+      <div class="giving-wrap">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Make a Contribution</div></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-lbl">Select Amount</label>
+                <div class="amt-grid">
+                  <div class="amt-btn" onclick="pickAmt(this,25)"><span class="amt-val">$25</span></div>
+                  <div class="amt-btn sel" onclick="pickAmt(this,50)"><span class="amt-val">$50</span></div>
+                  <div class="amt-btn" onclick="pickAmt(this,100)"><span class="amt-val">$100</span></div>
+                  <div class="amt-btn" onclick="pickAmt(this,250)"><span class="amt-val">$250</span></div>
+                  <div class="amt-btn" onclick="pickAmt(this,500)"><span class="amt-val">$500</span></div>
+                  <div class="amt-btn" onclick="pickCustom(this)"><span class="amt-val" style="font-size:18px">Other</span></div>
+                </div>
+                <input class="form-inp" type="number" id="custom-amt" placeholder="Enter amount…" style="display:none;margin-top:8px">
+              </div>
+
+              <div class="form-group">
+                <label class="form-lbl">Designate Fund</label>
+                <div class="fund-opts">
+                  <div class="fund-opt sel" onclick="pickFund(this)"><div class="fund-radio"></div><div><div class="fund-name">Contribution (General)</div><div class="fund-desc">Supports the local congregation</div></div></div>
+                  <div class="fund-opt" onclick="pickFund(this)"><div class="fund-radio"></div><div><div class="fund-name">Building Fund</div><div class="fund-desc">Facility maintenance &amp; improvements</div></div></div>
+                  <div class="fund-opt" onclick="pickFund(this)"><div class="fund-radio"></div><div><div class="fund-name">Missions &amp; Evangelism</div><div class="fund-desc">Supporting local &amp; world missions</div></div></div>
+                  <div class="fund-opt" onclick="pickFund(this)"><div class="fund-radio"></div><div><div class="fund-name">Benevolence</div><div class="fund-desc">Caring for members &amp; community in need</div></div></div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-lbl">Frequency</label>
+                <div class="freq-row">
+                  <div class="freq-btn sel" id="fr-once" onclick="pickFreq('once')">One-Time</div>
+                  <div class="freq-btn" id="fr-weekly" onclick="pickFreq('weekly')">Weekly</div>
+                  <div class="freq-btn" id="fr-monthly" onclick="pickFreq('monthly')">Monthly</div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-lbl">Payment Method</label>
+                <select class="form-sel">
+                  <option>💳 Visa ending in 4242</option>
+                  <option>🏦 ACH / Checking ••7890</option>
+                  <option>+ Add New Method</option>
+                </select>
+              </div>
+
+              <div class="giving-total-bar">
+                <span class="gtb-lbl">Contribution Total</span>
+                <span class="gtb-val" id="g-total">$50.00</span>
+              </div>
+
+              <button class="btn btn-gold" style="width:100%;justify-content:center;padding:13px;font-size:14px" onclick="doGiving()">
+                🤲 Give Now
+              </button>
+              <p style="text-align:center;font-size:11px;color:var(--ink-faint);margin-top:9px">🔒 Secure &amp; encrypted. A receipt will be emailed to you.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="total-card">
+            <div class="tc-lbl">Your 2025 Giving Total</div>
+            <div class="tc-val">$2,850.00</div>
+            <div class="tc-period">January — May 2025</div>
+          </div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-title">Giving History</div>
+              <button class="btn btn-outline btn-sm">📄 Tax Statement</button>
+            </div>
+            <div class="card-body" style="padding-top:6px">
+              <div class="gh-item"><div><div class="gh-fund">Contribution</div><div class="gh-date">May 25, 2025</div></div><div class="gh-amt">$100.00</div></div>
+              <div class="gh-item"><div><div class="gh-fund">Building Fund</div><div class="gh-date">May 18, 2025</div></div><div class="gh-amt">$200.00</div></div>
+              <div class="gh-item"><div><div class="gh-fund">Contribution</div><div class="gh-date">May 11, 2025</div></div><div class="gh-amt">$100.00</div></div>
+              <div class="gh-item"><div><div class="gh-fund">Missions</div><div class="gh-date">May 4, 2025</div></div><div class="gh-amt">$50.00</div></div>
+              <div class="gh-item"><div><div class="gh-fund">Contribution</div><div class="gh-date">Apr 27, 2025</div></div><div class="gh-amt">$100.00</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ MESSAGES ════ -->
+    <section id="sec-messages" class="section">
+      <div class="msg-wrap">
+        <div class="msg-left">
+          <div class="msg-left-hd">
+            <div class="msg-left-title">Messages</div>
+            <button class="btn btn-gold btn-sm" onclick="openNewMsg()">+ New</button>
+          </div>
+          <div class="msg-threads">
+            <div class="mt active" onclick="selThread(this,'Preacher Don Campbell','DC','var(--burgundy)','don')">
+              <div class="mt-ava" style="background:var(--burgundy)">DC</div>
+              <div class="mt-info"><div class="mt-name">Preacher Don Campbell</div><div class="mt-prev">See you Sunday morning, Robert…</div></div>
+              <div class="mt-right"><div class="mt-time">9:44 AM</div><div class="mt-unread"></div></div>
+            </div>
+            <div class="mt" onclick="selThread(this,'Worship Leaders Group','WL','var(--cobalt)','worship')">
+              <div class="mt-ava" style="background:var(--cobalt)">WL</div>
+              <div class="mt-info"><div class="mt-name">Worship Leaders Group</div><div class="mt-prev">Song list for Sunday is posted…</div></div>
+              <div class="mt-right"><div class="mt-time">Yesterday</div><div class="mt-unread"></div></div>
+            </div>
+            <div class="mt" onclick="selThread(this,'Sister Patricia Moore','PM','var(--forest)','pat')">
+              <div class="mt-ava" style="background:var(--forest)">PM</div>
+              <div class="mt-info"><div class="mt-name">Sister Patricia Moore</div><div class="mt-prev">Thank you for the kind visit!</div></div>
+              <div class="mt-right"><div class="mt-time">Monday</div></div>
+            </div>
+            <div class="mt" onclick="selThread(this,'Elders &amp; Deacons','ED','var(--deep-navy)','elders')">
+              <div class="mt-ava" style="background:var(--deep-navy)">ED</div>
+              <div class="mt-info"><div class="mt-name">Elders &amp; Deacons</div><div class="mt-prev">Agenda for June meeting…</div></div>
+              <div class="mt-right"><div class="mt-time">Sunday</div><div class="mt-unread"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg-right">
+          <div class="msg-right-hd">
+            <div class="mt-ava" id="ch-ava" style="background:var(--burgundy);width:38px;height:38px;flex-shrink:0">DC</div>
+            <div><div class="msg-chat-nm" id="ch-name">Preacher Don Campbell</div><div class="msg-chat-st">🟢 Online</div></div>
+          </div>
+          <div class="msg-body" id="msg-body"></div>
+          <div class="msg-compose">
+            <textarea class="msg-inp" id="msg-in" rows="1" placeholder="Type a message… (Enter to send)" onkeydown="msgKey(event)"></textarea>
+            <button class="msg-send" onclick="sendMsg()">↑</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ NOTIFICATIONS ════ -->
+    <section id="sec-notifications" class="section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <p style="font-size:13px;color:var(--ink-light)">5 unread notifications</p>
+        <button class="btn btn-outline btn-sm" onclick="markRead()">Mark All Read</button>
+      </div>
+      <div class="notif-list">
+        <div class="notif unread"><div class="notif-ico ni-bur">🙏</div><div class="notif-cnt"><div class="notif-title">Prayer Request — Sister Helen Bradford</div><div class="notif-msg">Helen has asked for prayers for her recovery. Please keep her in your daily prayers.</div><div class="notif-time">15 minutes ago</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-gld">📅</div><div class="notif-cnt"><div class="notif-title">Reminder: Wednesday Bible Class Tonight</div><div class="notif-msg">Bible class meets tonight at 7:00 PM in the Fellowship Hall. Study topic: Romans 8.</div><div class="notif-time">2 hours ago</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-for">👋</div><div class="notif-cnt"><div class="notif-title">New Members: James &amp; Carol Peterson</div><div class="notif-msg">James and Carol Peterson placed membership with us last Sunday. Please give them a warm welcome!</div><div class="notif-time">Yesterday at 2:00 PM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-cob">💳</div><div class="notif-cnt"><div class="notif-title">Giving Receipt — $100.00</div><div class="notif-msg">Your contribution of $100.00 on May 25 has been recorded. Thank you for your faithful stewardship.</div><div class="notif-time">May 25 at 10:30 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-bur">📣</div><div class="notif-cnt"><div class="notif-title">VBS Volunteers Still Needed — July 14–18</div><div class="notif-msg">We need 6 more volunteers for Vacation Bible School. See Brother Tom Bradford to sign up.</div><div class="notif-time">May 23 at 9:00 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif"><div class="notif-ico ni-gld">📄</div><div class="notif-cnt"><div class="notif-title">April Giving Statement Available</div><div class="notif-msg">Your April 2025 giving statement is ready to view in the Giving section.</div><div class="notif-time">May 1 at 8:00 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+      </div>
+    </section>
+
+    <!-- ════ MINISTRIES ════ -->
+    <section id="sec-ministry" class="section">
+      <p style="font-size:13px;color:var(--ink-light);margin-bottom:18px">Find your place to serve the Lord and build up the body of Christ.</p>
+      <div class="min-grid">
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(74,20,35,0.08),rgba(162,51,80,0.12))">🎵</div>
+          <div class="min-body"><div class="min-name">Worship Ministry</div><div class="min-desc">Lead the congregation in a cappella singing during Sunday worship and special events, in the tradition of the Churches of Christ.</div><div class="min-meta"><span>📅 Sundays 8:30 AM</span><span>👥 28 members</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Elder Robert Williams</div><span class="enrolled">✓ Enrolled</span></div>
+        </div>
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(15,30,58,0.08),rgba(42,82,153,0.12))">📖</div>
+          <div class="min-body"><div class="min-name">Adult Bible Class</div><div class="min-desc">In-depth Wednesday evening Bible study covering books of the Bible, doctrinal topics, and Christian living.</div><div class="min-meta"><span>📅 Wednesdays 7 PM</span><span>👥 65 members</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Preacher Don Campbell</div><button class="btn btn-navy btn-sm" onclick="openMinReg('Adult Bible Class')">Register</button></div>
+        </div>
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(42,82,153,0.08),rgba(59,110,194,0.12))">✝️</div>
+          <div class="min-body"><div class="min-name">Youth Ministry (6th–12th)</div><div class="min-desc">Weekly devotionals, service projects, and retreats helping young people grow in their faith and connection to the church.</div><div class="min-meta"><span>📅 Fridays 6:30 PM</span><span>👥 34 youth</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Bro. Kevin Marsh</div><button class="btn btn-navy btn-sm" onclick="openMinReg('Youth Ministry')">Register</button></div>
+        </div>
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(26,61,43,0.08),rgba(61,122,85,0.12))">🌿</div>
+          <div class="min-body"><div class="min-name">Benevolence &amp; Outreach</div><div class="min-desc">Serving those in need through food pantry, hospital &amp; shut-in visits, and community outreach in Sitka and beyond.</div><div class="min-meta"><span>📅 Saturdays 8 AM</span><span>👥 22 members</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Deacon Tom Bradford</div><span class="enrolled">✓ Enrolled</span></div>
+        </div>
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(122,78,10,0.08),rgba(200,126,26,0.12))">👩</div>
+          <div class="min-body"><div class="min-name">Ladies' Bible Class</div><div class="min-desc">Tuesday morning fellowship and scripture study for women of all ages, focusing on godly womanhood and encouragement.</div><div class="min-meta"><span>📅 Tuesdays 10 AM</span><span>👥 41 members</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Sis. Patricia Moore</div><button class="btn btn-outline btn-sm" onclick="openMinReg('Ladies\' Bible Class')">Register</button></div>
+        </div>
+        <div class="min-card">
+          <div class="min-banner" style="background:linear-gradient(135deg,rgba(15,30,58,0.07),rgba(74,20,35,0.08))">🙏</div>
+          <div class="min-body"><div class="min-name">Evangelism Team</div><div class="min-desc">Share the gospel through home Bible studies, door-knocking, and new member follow-up. Training provided for all skill levels.</div><div class="min-meta"><span>📅 Monthly meetings</span><span>👥 15 members</span></div></div>
+          <div class="min-foot"><div class="min-lead">Lead: Preacher Don Campbell</div><button class="btn btn-gold btn-sm" onclick="openMinReg('Evangelism Team')">Register</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════ PROFILE ════ -->
+    <section id="sec-profile" class="section">
+      <div class="prof-wrap">
+        <div>
+          <div class="card prof-card">
+            <div class="prof-ava">RW</div>
+            <div class="prof-name">Robert Williams</div>
+            <div class="prof-role">Elder · Sitka Church of Christ</div>
+            <div class="prof-badges">
+              <span class="pb pb-bur">Elder</span>
+              <span class="pb pb-nav">Worship</span>
+              <span class="pb pb-for">Outreach</span>
+            </div>
+            <div class="prof-stats">
+              <div class="ps-box"><div class="ps-val">11</div><div class="ps-lbl">Yrs Member</div></div>
+              <div class="ps-box"><div class="ps-val">$2,850</div><div class="ps-lbl">Given '25</div></div>
+              <div class="ps-box"><div class="ps-val">3</div><div class="ps-lbl">Ministries</div></div>
+              <div class="ps-box"><div class="ps-val">52</div><div class="ps-lbl">Events</div></div>
+            </div>
+            <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:14px">Edit Photo</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="prof-tabs">
+            <div class="ptab active" onclick="ptab(this,'pt-personal')">Personal Info</div>
+            <div class="ptab" onclick="ptab(this,'pt-family')">Family</div>
+            <div class="ptab" onclick="ptab(this,'pt-prefs')">Notification Preferences</div>
+          </div>
+
+          <div id="pt-personal" class="card" style="padding:22px">
+            <div class="form-2col">
+              <div class="form-group"><label class="form-lbl">First Name</label><input class="form-inp" value="Robert"></div>
+              <div class="form-group"><label class="form-lbl">Last Name</label><input class="form-inp" value="Williams"></div>
+              <div class="form-group"><label class="form-lbl">Date of Birth</label><input class="form-inp" type="date" value="1964-08-22"></div>
+              <div class="form-group"><label class="form-lbl">Marital Status</label><select class="form-sel"><option selected>Married</option><option>Single</option><option>Widowed</option><option>Divorced</option></select></div>
+              <div class="form-group"><label class="form-lbl">Occupation</label><input class="form-inp" value="Commercial Fisherman"></div>
+              <div class="form-group"><label class="form-lbl">Member Since</label><input class="form-inp" value="January 2014" disabled style="background:var(--parchment);color:var(--ink-faint)"></div>
+            </div>
+            <div class="form-group"><label class="form-lbl">Address</label><input class="form-inp" value="412 Harbor View Drive, Sitka, AK 99835"></div>
+            <div class="form-group"><label class="form-lbl">Email</label><input class="form-inp" type="email" value="robert.williams@email.com"></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Phone</label><input class="form-inp" value="(907) 555-0142"></div>
+            <div style="display:flex;gap:8px;margin-top:16px">
+              <button class="btn btn-gold">Save Changes</button>
+              <button class="btn btn-outline">Cancel</button>
+            </div>
+          </div>
+
+          <div id="pt-family" class="card" style="padding:22px;display:none">
+            <p style="font-size:12.5px;color:var(--ink-light);margin-bottom:16px">Family members associated with your household in our directory.</p>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:11px;padding:13px;background:var(--parchment);border-radius:var(--radius);border:1px solid var(--parchment-dark)">
+                <div class="mt-ava" style="background:var(--cobalt);width:40px;height:40px">MW</div>
+                <div><div style="font-size:13px;font-weight:700">Margaret Williams</div><div style="font-size:11px;color:var(--ink-faint)">Spouse · Also a member</div></div>
+                <button class="btn btn-outline btn-sm" style="margin-left:auto">View</button>
+              </div>
+              <div style="display:flex;align-items:center;gap:11px;padding:13px;background:var(--parchment);border-radius:var(--radius);border:1px solid var(--parchment-dark)">
+                <div class="mt-ava" style="background:var(--sage);width:40px;height:40px">JW</div>
+                <div><div style="font-size:13px;font-weight:700">Jacob Williams</div><div style="font-size:11px;color:var(--ink-faint)">Son · Youth Ministry</div></div>
+                <button class="btn btn-outline btn-sm" style="margin-left:auto">View</button>
+              </div>
+              <button class="btn btn-outline btn-sm" style="align-self:flex-start;margin-top:4px">+ Add Family Member</button>
+            </div>
+          </div>
+
+          <div id="pt-prefs" class="card" style="padding:22px;display:none">
+            <div class="toggle-row">
+              <div><div class="tr-title">Event Reminders</div><div class="tr-sub">Receive reminders 24 hrs before events you're attending</div></div>
+              <label class="tog"><input type="checkbox" checked><div class="tog-track"></div><div class="tog-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="tr-title">Prayer Request Notifications</div><div class="tr-sub">Be notified when prayer requests are submitted</div></div>
+              <label class="tog"><input type="checkbox" checked><div class="tog-track"></div><div class="tog-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="tr-title">Giving Receipts by Email</div><div class="tr-sub">Email confirmation after every contribution</div></div>
+              <label class="tog"><input type="checkbox" checked><div class="tog-track"></div><div class="tog-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="tr-title">Weekly Bulletin Email</div><div class="tr-sub">Receive the church bulletin every Friday evening</div></div>
+              <label class="tog"><input type="checkbox"><div class="tog-track"></div><div class="tog-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div><div class="tr-title">New Member Announcements</div><div class="tr-sub">Be notified when new members place membership</div></div>
+              <label class="tog"><input type="checkbox" checked><div class="tog-track"></div><div class="tog-thumb"></div></label>
+            </div>
+            <button class="btn btn-gold" style="margin-top:8px">Save Preferences</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ════ MODALS ════ -->
+<div class="overlay" id="ov-event">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="ev-title">Event</div><div class="modal-x" onclick="closeM('ov-event')">×</div></div>
+    <div class="modal-bd" id="ev-body"></div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('ov-event')">Close</button><button class="btn btn-gold">RSVP / Register</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-prayer">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">🙏 Prayer Request</div><div class="modal-x" onclick="closeM('ov-prayer')">×</div></div>
+    <div class="modal-bd">
+      <p style="font-size:12.5px;color:var(--ink-light);margin-bottom:14px">Share your need with our prayer team. All requests are handled with care and discretion.</p>
+      <div class="form-group"><label class="form-lbl">Your Request</label><textarea class="form-area" rows="5" placeholder="How can we pray for you?"></textarea></div>
+      <div class="form-group"><label class="form-lbl">Visibility</label><select class="form-sel"><option>Prayer Team Only (Private)</option><option>Entire Congregation</option><option>Elders Only</option></select></div>
+      <div style="padding:11px 13px;background:var(--gold-pale);border-radius:var(--radius);border:1px solid rgba(168,104,15,0.18);font-size:11.5px;color:var(--ink-mid)">
+        ✝ Your elders and prayer team will hold your request in confidence and in prayer.
+      </div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('ov-prayer')">Cancel</button><button class="btn btn-gold" onclick="submitPrayer()">Submit Request</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-ministry">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title" id="min-title">Ministry Registration</div><div class="modal-x" onclick="closeM('ov-ministry')">×</div></div>
+    <div class="modal-bd">
+      <p style="font-size:12.5px;color:var(--ink-light);margin-bottom:14px">We're glad you'd like to serve! Please complete the brief form below.</p>
+      <div class="form-group"><label class="form-lbl">Why do you feel called to this ministry?</label><textarea class="form-area" rows="3" placeholder="Share your heart…"></textarea></div>
+      <div class="form-group"><label class="form-lbl">Availability</label><select class="form-sel"><option>Weekends</option><option>Weekdays</option><option>Flexible</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Skills or Experience</label><input class="form-inp" placeholder="Any relevant background…"></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('ov-ministry')">Cancel</button><button class="btn btn-gold" onclick="submitMin()">Submit</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-give-ok">
+  <div class="modal">
+    <div class="modal-bd" style="text-align:center;padding:36px 28px">
+      <div style="font-size:54px;margin-bottom:14px">🙏</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--deep-navy);margin-bottom:7px">Thank You, Robert.</div>
+      <p style="font-size:13px;color:var(--ink-light);margin-bottom:18px">Your contribution has been received. A receipt has been sent to your email.</p>
+      <div style="background:var(--gold-pale);border-radius:var(--radius);padding:14px;border:1px solid rgba(168,104,15,0.18);margin-bottom:16px">
+        <div style="font-size:11px;color:var(--ink-faint)">Amount Contributed</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--deep-navy)" id="ok-amt">$50.00</div>
+        <div style="font-size:11px;color:var(--amber);font-weight:700">General Contribution · One-Time</div>
+      </div>
+      <p style="font-size:12px;font-style:italic;color:var(--ink-light);font-family:'Cormorant Garamond',serif;line-height:1.5">"Each one must give as he has decided in his heart, not reluctantly or under compulsion, for God loves a cheerful giver." — 2 Cor 9:7</p>
+      <button class="btn btn-gold" style="margin-top:18px" onclick="closeM('ov-give-ok')">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-newmsg">
+  <div class="modal">
+    <div class="modal-hd"><div class="modal-title">New Message</div><div class="modal-x" onclick="closeM('ov-newmsg')">×</div></div>
+    <div class="modal-bd">
+      <div class="form-group"><label class="form-lbl">To</label><input class="form-inp" placeholder="Search member name…"></div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Message</label><textarea class="form-area" rows="4" placeholder="Write your message…"></textarea></div>
+    </div>
+    <div class="modal-ft"><button class="btn btn-outline" onclick="closeM('ov-newmsg')">Cancel</button><button class="btn btn-gold" onclick="closeM('ov-newmsg')">Send →</button></div>
+  </div>
+</div>
+
+<script>
+// ── Navigation ──────────────────────────────
+const bcLabels = { dashboard:'Dashboard', calendar:'Calendar & Events', directory:'Member Directory', giving:'Giving', messages:'Messages', notifications:'Notifications', ministry:'Ministries', profile:'My Profile' };
+function nav(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('breadcrumb').textContent = bcLabels[id] || '';
+}
+
+// ── Members data ─────────────────────────────
+const MEM = [
+  { n:'Preacher Don Campbell', r:'Preacher', i:'DC', c:'#4A1423' },
+  { n:'Elder Robert Williams', r:'Elder · Worship Lead', i:'RW', c:'#6B1D30' },
+  { n:'Elder James Foster', r:'Elder', i:'JF', c:'#0F1E3A' },
+  { n:'Deacon Tom Bradford', r:'Deacon · Benevolence', i:'TB', c:'#1A3D2B' },
+  { n:'Sister Patricia Moore', r:'Ladies\' Class Lead', i:'PM', c:'#2A5239' },
+  { n:'Brother Kevin Marsh', r:'Youth Ministry Lead', i:'KM', c:'#2A5299' },
+  { n:'Sister Margaret Williams', r:'Ladies\' Class', i:'MW', c:'#3B6EC2' },
+  { n:'Brother Harold Jensen', r:'Worship Ministry', i:'HJ', c:'#7A4E0A' },
+  { n:'Sister Carol Peterson', r:'New Member', i:'CP', c:'#4A7C59' },
+  { n:'Brother James Peterson', r:'New Member', i:'JP', c:'#8B2840' },
+  { n:'Sister Betty Nash', r:'Ladies\' Class', i:'BN', c:'#1A3058' },
+  { n:'Brother Samuel Crow', r:'Worship Ministry', i:'SC', c:'#2A5299' },
+];
+
+function renderMem(list) {
+  document.getElementById('mem-grid').innerHTML = list.map(m => `
+    <div class="mem-card">
+      <div class="mem-ava" style="background:linear-gradient(135deg,${m.c},${m.c}bb)">${m.i}</div>
+      <div class="mem-name">${m.n}</div>
+      <div class="mem-role">${m.r}</div>
+      <div class="mem-acts">
+        <button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">✉️ Message</button>
+        <button class="btn btn-outline btn-sm" onclick="event.stopPropagation()">📞 Contact</button>
+      </div>
+    </div>`).join('');
+}
+renderMem(MEM);
+function filterMem(q) { renderMem(MEM.filter(m => m.n.toLowerCase().includes(q.toLowerCase()) || m.r.toLowerCase().includes(q.toLowerCase()))); }
+
+// Filter chips
+document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', function() {
+  this.closest('.dir-controls').querySelectorAll('.fchip').forEach(x => x.classList.remove('active'));
+  this.classList.add('active');
+}));
+
+// ── Giving ──────────────────────────────────
+let gAmt = 50;
+function pickAmt(btn, v) {
+  document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  gAmt = v;
+  document.getElementById('custom-amt').style.display = 'none';
+  document.getElementById('g-total').textContent = '$' + v.toFixed(2);
+}
+function pickCustom(btn) {
+  document.querySelectorAll('.amt-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  const inp = document.getElementById('custom-amt');
+  inp.style.display = 'block';
+  inp.oninput = () => { gAmt = parseFloat(inp.value) || 0; document.getElementById('g-total').textContent = '$' + gAmt.toFixed(2); };
+}
+function pickFund(el) { document.querySelectorAll('.fund-opt').forEach(f => f.classList.remove('sel')); el.classList.add('sel'); }
+function pickFreq(t) {
+  ['once','weekly','monthly'].forEach(id => { const b = document.getElementById('fr-' + id); b.classList.remove('sel'); });
+  document.getElementById('fr-' + t).classList.add('sel');
+}
+function doGiving() {
+  document.getElementById('ok-amt').textContent = '$' + gAmt.toFixed(2);
+  document.getElementById('ov-give-ok').classList.add('open');
+}
+
+// ── Messages ─────────────────────────────────
+const CONVOS = {
+  don: [
+    { s:false, t:"Good morning, Brother Robert! Just confirming — are we still doing a pre-worship gathering at 8:30 this Sunday? I'd like the elders together before services.", ti:"9:38 AM", nm:"Don Campbell" },
+    { s:true,  t:"Yes, absolutely. I'll be there at 8:20 to make sure the room is ready. Should we also include the deacons?", ti:"9:41 AM" },
+    { s:false, t:"Good idea — please invite Tom Bradford as well. See you Sunday morning, Robert. Grace and peace to you.", ti:"9:44 AM", nm:"Don Campbell" },
+  ],
+  worship: [
+    { s:false, t:"Brothers, the song list for Sunday morning is posted in the foyer binder. Leading: How Great Thou Art, Blessed Assurance, Lord I Need You.", ti:"Yesterday 5:00 PM", nm:"Kevin Marsh" },
+    { s:true,  t:"Thank you, Kevin. I'll review tonight. Let's plan to run through once at 8:30 before services.", ti:"Yesterday 5:45 PM" },
+  ],
+  pat: [
+    { s:false, t:"Brother Robert, I just wanted to reach out and thank you for visiting my mother last Tuesday. She hasn't stopped talking about it — it truly blessed her.", ti:"Monday 1:15 PM", nm:"Patricia Moore" },
+    { s:true,  t:"It was my privilege, Sister Patricia. Please let her know we are all praying for her continued recovery.", ti:"Monday 2:00 PM" },
+  ],
+  elders: [
+    { s:false, t:"Gentlemen, please see the attached agenda for our June elders & deacons meeting. Key items: benevolence requests, VBS planning, and the matter raised by Brother Jenkins.", ti:"Sunday 4:00 PM", nm:"James Foster" },
+    { s:true,  t:"I've reviewed it. I'll prepare remarks on item 2 (VBS). Thank you, Elder Foster.", ti:"Sunday 4:30 PM" },
+  ]
+};
+let activeConvo = 'don';
+function selThread(el, nm, initials, col, key) {
+  document.querySelectorAll('.mt').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('ch-name').textContent = nm;
+  document.getElementById('ch-ava').textContent = initials;
+  document.getElementById('ch-ava').style.background = col;
+  activeConvo = key;
+  renderConvo(key);
+}
+function renderConvo(key) {
+  const msgs = CONVOS[key] || [];
+  const body = document.getElementById('msg-body');
+  body.innerHTML = msgs.map(m => `
+    <div>
+      <div class="bubble ${m.s?'sent':'recv'}">${m.t}</div>
+      <div class="btime ${m.s?'sent':''}">${m.s ? 'You' : m.nm} · ${m.ti}</div>
+    </div>`).join('');
+  body.scrollTop = body.scrollHeight;
+}
+renderConvo('don');
+function sendMsg() {
+  const inp = document.getElementById('msg-in');
+  const txt = inp.value.trim(); if (!txt) return;
+  const now = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  if (!CONVOS[activeConvo]) CONVOS[activeConvo] = [];
+  CONVOS[activeConvo].push({ s:true, t:txt, ti:now });
+  inp.value = '';
+  renderConvo(activeConvo);
+}
+function msgKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } }
+
+// ── Notifications ────────────────────────────
+function dismissN(btn) {
+  const el = btn.closest('.notif');
+  el.style.transition = 'all 0.25s ease'; el.style.opacity = '0'; el.style.transform = 'translateX(16px)';
+  setTimeout(() => el.remove(), 250);
+}
+function markRead() { document.querySelectorAll('.notif.unread').forEach(n => n.classList.remove('unread')); }
+
+// ── Modals ──────────────────────────────────
+function openEvtModal(nm, dt, ti, loc, type) {
+  document.getElementById('ev-title').textContent = nm;
+  const bdc = { bur:'var(--burgundy)', nav:'var(--navy)', for:'var(--forest)', cob:'var(--cobalt)', gld:'var(--amber)' };
+  document.getElementById('ev-body').innerHTML = `
+    <div style="padding:13px 14px;background:var(--parchment);border-radius:var(--radius);border-left:3px solid ${bdc[type]||'var(--amber)'};margin-bottom:14px">
+      <div style="font-size:12.5px;color:var(--ink-light);margin-bottom:3px">📅 ${dt}</div>
+      <div style="font-size:12.5px;color:var(--ink-light);margin-bottom:3px">🕐 ${ti}</div>
+      <div style="font-size:12.5px;color:var(--ink-light)">📍 ${loc}</div>
+    </div>
+    <div class="form-group"><label class="form-lbl">Your Attendance</label><select class="form-sel"><option>✓ Attending</option><option>Maybe</option><option>Not Attending</option></select></div>
+    <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Notes</label><input class="form-inp" placeholder="Any notes or needs…"></div>`;
+  document.getElementById('ov-event').classList.add('open');
+}
+function openPrayerModal() { document.getElementById('ov-prayer').classList.add('open'); }
+function openMinReg(nm) { document.getElementById('min-title').textContent = 'Register: ' + nm; document.getElementById('ov-ministry').classList.add('open'); }
+function openNewMsg() { document.getElementById('ov-newmsg').classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+function submitPrayer() { closeM('ov-prayer'); setTimeout(() => alert('🙏 Your prayer request has been submitted. Our prayer team will be with you.'), 200); }
+function submitMin() { closeM('ov-ministry'); setTimeout(() => alert('✅ Your registration has been submitted. You will be contacted by the ministry leader soon.'), 200); }
+
+// Close on backdrop click
+document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) closeM(ov.id); }));
+
+// Profile tabs
+function ptab(el, id) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active')); el.classList.add('active');
+  ['pt-personal','pt-family','pt-prefs'].forEach(k => { const d = document.getElementById(k); if (d) d.style.display = k === id ? 'block' : 'none'; });
+}
+</script>
+</body>
+</html>
