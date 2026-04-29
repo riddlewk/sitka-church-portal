@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sitka Church of Christ — Member Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep-burgundy: #4A1423;
+  --burgundy: #6B1D30;
+  --burgundy-mid: #8B2840;
+  --deep-navy: #0F1E3A;
+  --navy: #1A3058;
+  --navy-mid: #244070;
+  --amber: #A8680F;
+  --amber-mid: #C87E1A;
+  --gold: #D4941C;
+  --gold-light: #E8B84B;
+  --gold-pale: #F9EFD8;
+  --parchment: #FAF5EC;
+  --parchment-dark: #F2E8D5;
+  --warm-linen: #EDE4D0;
+  --warm-stone: #D8CEB8;
+  --ink: #1C1008;
+  --ink-mid: #3D2E20;
+  --ink-light: #6B5C4A;
+  --ink-faint: #9A8B78;
+  --forest: #2A5C3F;
+  --sage: #3D7A55;
+  --crimson-err: #8B2020;
+  --shadow-sm: 0 2px 8px rgba(28,16,8,0.10);
+  --shadow-md: 0 4px 20px rgba(28,16,8,0.14);
+  --shadow-lg: 0 10px 50px rgba(28,16,8,0.22);
+  --radius: 6px;
+  --radius-lg: 12px;
+  --tr: all 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--deep-navy);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Stained-glass background panels ── */
+.bg-panels {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+}
+
+.panel {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+
+.panel-1 {
+  width: 600px; height: 600px;
+  top: -150px; left: -150px;
+  background: var(--burgundy);
+}
+
+.panel-2 {
+  width: 500px; height: 500px;
+  bottom: -100px; right: -100px;
+  background: var(--navy-mid);
+  opacity: 0.25;
+}
+
+.panel-3 {
+  width: 400px; height: 400px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--amber);
+  opacity: 0.08;
+}
+
+/* Subtle grid overlay */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(212,148,28,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,148,28,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Cross watermarks */
+.cross-left, .cross-right {
+  position: fixed; z-index: 0;
+  font-size: 320px; line-height: 1;
+  color: rgba(255,255,255,0.02);
+  font-family: serif; pointer-events: none;
+  user-select: none;
+}
+.cross-left { top: 50%; left: -60px; transform: translateY(-50%); }
+.cross-right { top: 50%; right: -60px; transform: translateY(-50%); }
+
+/* ── Main card ── */
+.login-wrap {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 420px;
+  padding: 20px;
+  animation: cardIn 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Church header above card */
+.church-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.emblem {
+  width: 64px; height: 64px;
+  background: linear-gradient(145deg, var(--amber-mid), var(--gold));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow: 0 4px 24px rgba(212,148,28,0.4), inset 0 1px 2px rgba(255,255,255,0.25);
+  border: 2px solid rgba(232,184,75,0.45);
+  font-size: 28px;
+}
+
+.church-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px; font-weight: 700;
+  color: #fff; line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.church-name em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+
+.church-sub {
+  font-size: 11px; color: rgba(255,255,255,0.45);
+  text-transform: uppercase; letter-spacing: 0.16em;
+  margin-top: 5px; font-weight: 700;
+}
+
+/* Decorative rule */
+.rule {
+  display: flex; align-items: center; gap: 10px;
+  margin: 0 auto 24px; max-width: 220px;
+}
+.rule::before, .rule::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,148,28,0.4));
+}
+.rule::after { background: linear-gradient(90deg, rgba(212,148,28,0.4), transparent); }
+.rule-cross { color: var(--gold); font-size: 13px; opacity: 0.7; }
+
+/* Card */
+.card {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgba(212,148,28,0.12);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Rainbow stripe at top */
+.card-stripe {
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--deep-burgundy) 0%,
+    var(--burgundy-mid) 20%,
+    var(--gold) 40%,
+    var(--amber-mid) 60%,
+    var(--navy) 80%,
+    var(--forest) 100%
+  );
+}
+
+.card-body { padding: 32px 32px 28px; }
+
+/* Panel titles */
+.panel-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--deep-navy);
+  margin-bottom: 6px; line-height: 1.2;
+}
+.panel-sub {
+  font-size: 12.5px; color: var(--ink-light);
+  margin-bottom: 24px; line-height: 1.4;
+}
+
+/* Form */
+.form-group { margin-bottom: 16px; }
+
+.form-lbl {
+  display: block; font-size: 10.5px; font-weight: 700;
+  color: var(--ink-light); margin-bottom: 5px;
+  text-transform: uppercase; letter-spacing: 0.09em;
+}
+
+.input-wrap {
+  position: relative; display: flex; align-items: center;
+}
+
+.form-inp {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--warm-stone); border-radius: var(--radius);
+  font-family: 'Lato', sans-serif; font-size: 14px; outline: none;
+  color: var(--ink); background: var(--parchment); transition: var(--tr);
+}
+
+.form-inp:focus {
+  border-color: var(--gold);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212,148,28,0.12);
+}
+
+.form-inp.error {
+  border-color: var(--crimson-err);
+  box-shadow: 0 0 0 3px rgba(139,32,32,0.1);
+}
+
+.inp-icon {
+  position: absolute; right: 12px;
+  color: var(--ink-faint); font-size: 16px;
+  cursor: pointer; transition: var(--tr); user-select: none;
+}
+.inp-icon:hover { color: var(--amber); }
+
+/* Error message */
+.err-msg {
+  font-size: 11.5px; color: var(--crimson-err);
+  margin-top: 5px; display: none; align-items: center; gap: 4px;
+}
+.err-msg.show { display: flex; }
+
+/* Forgot password link */
+.forgot-row {
+  display: flex; justify-content: flex-end; margin-top: -8px; margin-bottom: 16px;
+}
+.forgot-link {
+  font-size: 12px; color: var(--amber); font-weight: 700;
+  cursor: pointer; transition: var(--tr); text-decoration: none;
+  background: none; border: none; font-family: 'Lato', sans-serif;
+}
+.forgot-link:hover { color: var(--deep-burgundy); text-decoration: underline; }
+
+/* Submit button */
+.submit-btn {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, var(--deep-navy), var(--navy-mid));
+  color: #fff; border: none; border-radius: var(--radius);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px; font-weight: 700; font-style: italic;
+  cursor: pointer; transition: var(--tr);
+  letter-spacing: 0.02em;
+  box-shadow: 0 3px 14px rgba(15,30,58,0.35);
+  position: relative; overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--burgundy), var(--navy-mid));
+  opacity: 0; transition: var(--tr);
+}
+.submit-btn:hover::before { opacity: 1; }
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 20px rgba(15,30,58,0.45); }
+.submit-btn:active { transform: translateY(0); }
+
+.submit-btn span { position: relative; z-index: 1; }
+
+/* Loading state */
+.submit-btn.loading { pointer-events: none; opacity: 0.8; }
+.spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Alert banner */
+.alert {
+  padding: 11px 14px; border-radius: var(--radius);
+  font-size: 12.5px; margin-bottom: 16px;
+  display: none; align-items: flex-start; gap: 8px; line-height: 1.4;
+}
+.alert.show { display: flex; }
+.alert-error { background: rgba(139,32,32,0.08); border: 1px solid rgba(139,32,32,0.2); color: var(--crimson-err); }
+.alert-success { background: rgba(26,61,43,0.08); border: 1px solid rgba(26,61,43,0.2); color: var(--forest); }
+.alert-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* Divider */
+.divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 20px 0; color: var(--ink-faint); font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--warm-linen);
+}
+
+/* Panels (login / forgot) */
+.view { display: none; }
+.view.active { display: block; }
+
+/* Footer scripture */
+.card-foot {
+  padding: 14px 32px 20px;
+  border-top: 1px solid var(--warm-linen);
+  text-align: center;
+}
+.scripture {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic; font-size: 13px;
+  color: var(--ink-faint); line-height: 1.5;
+}
+.scripture cite {
+  display: block; font-style: normal;
+  font-size: 10.5px; color: var(--gold);
+  font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-top: 4px;
+}
+
+/* Bottom note */
+.bottom-note {
+  text-align: center; margin-top: 20px;
+  font-size: 11.5px; color: rgba(255,255,255,0.35);
+  line-height: 1.5;
+}
+.bottom-note a {
+  color: rgba(255,255,255,0.55); text-decoration: none;
+  font-weight: 700; transition: var(--tr);
+}
+.bottom-note a:hover { color: var(--gold-light); }
+
+/* Success panel */
+.success-panel {
+  text-align: center; padding: 10px 0;
+}
+.success-icon { font-size: 48px; margin-bottom: 14px; display: block; }
+.success-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 700; color: var(--deep-navy);
+  margin-bottom: 8px;
+}
+.success-msg { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
+.back-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 20px; font-size: 13px; font-weight: 700;
+  color: var(--amber); cursor: pointer; transition: var(--tr);
+  background: none; border: none; font-family: 'Lato', sans-serif;
+}
+.back-link:hover { color: var(--deep-burgundy); }
+</style>
+</head>
+<body>
+
+<div class="bg-panels">
+  <div class="panel panel-1"></div>
+  <div class="panel panel-2"></div>
+  <div class="panel panel-3"></div>
+</div>
+<div class="bg-grid"></div>
+<div class="cross-left">✝</div>
+<div class="cross-right">✝</div>
+
+<div class="login-wrap">
+
+  <!-- Church header -->
+  <div class="church-header">
+    <div class="emblem">✝</div>
+    <div class="church-name">Sitka<br><em>Church of Christ</em></div>
+    <div class="church-sub">Member Portal</div>
+  </div>
+
+  <div class="rule"><span class="rule-cross">✦</span></div>
+
+  <!-- Card -->
+  <div class="card">
+    <div class="card-stripe"></div>
+    <div class="card-body">
+
+      <!-- ── LOGIN VIEW ── -->
+      <div class="view active" id="view-login">
+        <div class="panel-title">Welcome Back</div>
+        <div class="panel-sub">Sign in to access the member portal.</div>
+
+        <div class="alert alert-error" id="login-error">
+          <span class="alert-icon">⚠️</span>
+          <span id="login-error-msg">Invalid email or password. Please try again.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-lbl" for="login-email">Email Address</label>
+          <div class="input-wrap">
+            <input class="form-inp" type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="err-msg" id="email-err">⚠ Please enter a valid email address.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-lbl" for="login-password">Password</label>
+          <div class="input-wrap">
+            <input class="form-inp" type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+            <span class="inp-icon" id="toggle-pw" onclick="togglePw()">👁</span>
+          </div>
+          <div class="err-msg" id="pw-err">⚠ Please enter your password.</div>
+        </div>
+
+        <div class="forgot-row">
+          <button class="forgot-link" onclick="showView('view-forgot')">Forgot your password?</button>
+        </div>
+
+        <button class="submit-btn" id="login-btn" onclick="doLogin()">
+          <span id="login-btn-text">Sign In</span>
+        </button>
+      </div>
+
+      <!-- ── FORGOT PASSWORD VIEW ── -->
+      <div class="view" id="view-forgot">
+        <div class="panel-title">Reset Password</div>
+        <div class="panel-sub">Enter your email address and we'll send you a link to reset your password.</div>
+
+        <div class="alert alert-error" id="forgot-error">
+          <span class="alert-icon">⚠️</span>
+          <span id="forgot-error-msg">Something went wrong. Please try again.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-lbl" for="forgot-email">Email Address</label>
+          <div class="input-wrap">
+            <input class="form-inp" type="email" id="forgot-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="err-msg" id="forgot-email-err">⚠ Please enter a valid email address.</div>
+        </div>
+
+        <button class="submit-btn" id="forgot-btn" onclick="doForgot()">
+          <span id="forgot-btn-text">Send Reset Link</span>
+        </button>
+
+        <div class="divider">or</div>
+
+        <button class="back-link" onclick="showView('view-login')">← Back to Sign In</button>
+      </div>
+
+      <!-- ── FORGOT SUCCESS VIEW ── -->
+      <div class="view" id="view-forgot-ok">
+        <div class="success-panel">
+          <span class="success-icon">✉️</span>
+          <div class="success-title">Check Your Email</div>
+          <div class="success-msg">
+            We've sent a password reset link to<br>
+            <strong id="reset-email-shown"></strong><br><br>
+            Click the link in that email to set a new password. Check your spam folder if you don't see it within a few minutes.
+          </div>
+          <button class="back-link" onclick="showView('view-login')">← Back to Sign In</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card-foot">
+      <div class="scripture">
+        "I am the way, the truth, and the life."
+        <cite>— John 14:6</cite>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-note">
+    Access to this portal is by invitation only.<br>
+    Questions? Contact <a href="mailto:admin@sitkachurchofchrist.org">your congregation's administrator</a>.
+  </div>
+
+</div>
+
+<script>
+  // ── Supabase configuration ──────────────────────────────────────
+  // Replace these two values with your actual Supabase credentials
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+  const SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+
+  // ── Load Supabase client from CDN ───────────────────────────────
+  const sbScript = document.createElement('script');
+  sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  sbScript.onload = initSupabase;
+  document.head.appendChild(sbScript);
+
+  let supabase = null;
+
+  function initSupabase() {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // If already logged in, redirect to portal
+    checkSession();
+  }
+
+  async function checkSession() {
+    if (!supabase) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      window.location.href = 'index.html';
+    }
+  }
+
+  // ── View switching ──────────────────────────────────────────────
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    clearErrors();
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+    document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
+    document.querySelectorAll('.form-inp').forEach(i => i.classList.remove('error'));
+  }
+
+  // ── Toggle password visibility ──────────────────────────────────
+  function togglePw() {
+    const inp = document.getElementById('login-password');
+    const ico = document.getElementById('toggle-pw');
+    if (inp.type === 'password') {
+      inp.type = 'text'; ico.textContent = '🙈';
+    } else {
+      inp.type = 'password'; ico.textContent = '👁';
+    }
+  }
+
+  // ── Login ───────────────────────────────────────────────────────
+  async function doLogin() {
+    clearErrors();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    let valid = true;
+
+    if (!email || !email.includes('@')) {
+      document.getElementById('email-err').classList.add('show');
+      document.getElementById('login-email').classList.add('error');
+      valid = false;
+    }
+    if (!password) {
+      document.getElementById('pw-err').classList.add('show');
+      document.getElementById('login-password').classList.add('error');
+      valid = false;
+    }
+    if (!valid) return;
+
+    // Show loading state
+    const btn = document.getElementById('login-btn');
+    document.getElementById('login-btn-text').innerHTML = '<span class="spinner"></span>Signing in…';
+    btn.classList.add('loading');
+
+    if (!supabase) {
+      // Demo mode — Supabase not yet configured
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        document.getElementById('login-btn-text').textContent = 'Sign In';
+        document.getElementById('login-error-msg').textContent =
+          'Supabase is not yet configured. Add your credentials to login.html to enable authentication.';
+        document.getElementById('login-error').classList.add('show');
+      }, 800);
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    btn.classList.remove('loading');
+    document.getElementById('login-btn-text').textContent = 'Sign In';
+
+    if (error) {
+      document.getElementById('login-error-msg').textContent =
+        error.message === 'Invalid login credentials'
+          ? 'Incorrect email or password. Please try again.'
+          : error.message;
+      document.getElementById('login-error').classList.add('show');
+      return;
+    }
+
+    // Success — redirect to portal
+    window.location.href = 'index.html';
+  }
+
+  // ── Forgot password ─────────────────────────────────────────────
+  async function doForgot() {
+    clearErrors();
+    const email = document.getElementById('forgot-email').value.trim();
+
+    if (!email || !email.includes('@')) {
+      document.getElementById('forgot-email-err').classList.add('show');
+      document.getElementById('forgot-email').classList.add('error');
+      return;
+    }
+
+    const btn = document.getElementById('forgot-btn');
+    document.getElementById('forgot-btn-text').innerHTML = '<span class="spinner"></span>Sending…';
+    btn.classList.add('loading');
+
+    if (!supabase) {
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
+        document.getElementById('forgot-error-msg').textContent =
+          'Supabase is not yet configured. Add your credentials to enable password reset.';
+        document.getElementById('forgot-error').classList.add('show');
+      }, 800);
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/index.html'
+    });
+
+    btn.classList.remove('loading');
+    document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
+
+    if (error) {
+      document.getElementById('forgot-error-msg').textContent = error.message;
+      document.getElementById('forgot-error').classList.add('show');
+      return;
+    }
+
+    // Show success
+    document.getElementById('reset-email-shown').textContent = email;
+    showView('view-forgot-ok');
+  }
+
+  // ── Enter key support ───────────────────────────────────────────
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      const activeView = document.querySelector('.view.active').id;
+      if (activeView === 'view-login') doLogin();
+      if (activeView === 'view-forgot') doForgot();
+    }
+  });
+</script>
+</body>
+</html>
