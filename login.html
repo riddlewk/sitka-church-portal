@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sitka church of Christ — Member Login</title>
+<title>Sitka Church of Christ — Member Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --deep-burgundy: #4A1423;
@@ -486,33 +487,17 @@ body {
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── Supabase configuration ──────────────────────────────────────
-  // Replace these two values with your actual Supabase credentials
+  // ── Supabase ────────────────────────────────────────────────────
   const SUPABASE_URL = 'https://wmuboaugaqcweiuiqpvi.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdWJvYXVnYXFjd2VpdWlxcHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjU2NTksImV4cCI6MjA5MzAwMTY1OX0.ELglRHDZOhxIcGUIyjAHGji2j_32u1Wem60KnIgRROI';
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── Load Supabase client from CDN ───────────────────────────────
-  const sbScript = document.createElement('script');
-  sbScript.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-  sbScript.onload = initSupabase;
-  document.head.appendChild(sbScript);
-
-  let supabase = null;
-
-  function initSupabase() {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    // If already logged in, redirect to portal
-    checkSession();
-  }
-
-  async function checkSession() {
-    if (!supabase) return;
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-      window.location.href = 'index.html';
-    }
-  }
+  // Redirect to portal if already logged in
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (session) window.location.href = 'index.html';
+  });
 
   // ── View switching ──────────────────────────────────────────────
   function showView(id) {
@@ -532,9 +517,9 @@ body {
     const inp = document.getElementById('login-password');
     const ico = document.getElementById('toggle-pw');
     if (inp.type === 'password') {
-      inp.type = 'text'; ico.textContent = '🙈';
+      inp.type = 'text'; ico.textContent = 'X';
     } else {
-      inp.type = 'password'; ico.textContent = '👁';
+      inp.type = 'password'; ico.textContent = 'O';
     }
   }
 
@@ -557,22 +542,9 @@ body {
     }
     if (!valid) return;
 
-    // Show loading state
     const btn = document.getElementById('login-btn');
-    document.getElementById('login-btn-text').innerHTML = '<span class="spinner"></span>Signing in…';
+    document.getElementById('login-btn-text').textContent = 'Signing in...';
     btn.classList.add('loading');
-
-    if (!supabase) {
-      // Demo mode — Supabase not yet configured
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        document.getElementById('login-btn-text').textContent = 'Sign In';
-        document.getElementById('login-error-msg').textContent =
-          'Supabase is not yet configured. Add your credentials to login.html to enable authentication.';
-        document.getElementById('login-error').classList.add('show');
-      }, 800);
-      return;
-    }
 
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -588,7 +560,6 @@ body {
       return;
     }
 
-    // Success — redirect to portal
     window.location.href = 'index.html';
   }
 
@@ -604,22 +575,11 @@ body {
     }
 
     const btn = document.getElementById('forgot-btn');
-    document.getElementById('forgot-btn-text').innerHTML = '<span class="spinner"></span>Sending…';
+    document.getElementById('forgot-btn-text').textContent = 'Sending...';
     btn.classList.add('loading');
 
-    if (!supabase) {
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
-        document.getElementById('forgot-error-msg').textContent =
-          'Supabase is not yet configured. Add your credentials to enable password reset.';
-        document.getElementById('forgot-error').classList.add('show');
-      }, 800);
-      return;
-    }
-
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/index.html'
+      redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
     });
 
     btn.classList.remove('loading');
@@ -631,7 +591,6 @@ body {
       return;
     }
 
-    // Show success
     document.getElementById('reset-email-shown').textContent = email;
     showView('view-forgot-ok');
   }
