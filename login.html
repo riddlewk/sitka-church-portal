@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sitka Church of Christ — Member Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --deep-burgundy: #4A1423;
@@ -487,19 +486,9 @@ body {
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ── Supabase ────────────────────────────────────────────────────
-  const SUPABASE_URL = 'https://wmuboaugaqcweiuiqpvi.supabase.co';
-  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdWJvYXVnYXFjd2VpdWlxcHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjU2NTksImV4cCI6MjA5MzAwMTY1OX0.ELglRHDZOhxIcGUIyjAHGji2j_32u1Wem60KnIgRROI';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  // ── UI FUNCTIONS — run immediately, no Supabase needed ──────────
 
-  // Redirect to portal if already logged in
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) window.location.href = 'index.html';
-  });
-
-  // ── View switching ──────────────────────────────────────────────
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -512,18 +501,41 @@ body {
     document.querySelectorAll('.form-inp').forEach(i => i.classList.remove('error'));
   }
 
-  // ── Toggle password visibility ──────────────────────────────────
   function togglePw() {
     const inp = document.getElementById('login-password');
-    const ico = document.getElementById('toggle-pw');
-    if (inp.type === 'password') {
-      inp.type = 'text'; ico.textContent = 'X';
-    } else {
-      inp.type = 'password'; ico.textContent = 'O';
-    }
+    inp.type = inp.type === 'password' ? 'text' : 'password';
   }
 
-  // ── Login ───────────────────────────────────────────────────────
+  // ── SUPABASE — load asynchronously after UI is ready ───────────
+  const SUPABASE_URL = 'https://wmuboaugaqcweiuiqpvi.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdWJvYXVnYXFjd2VpdWlxcHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjU2NTksImV4cCI6MjA5MzAwMTY1OX0.ELglRHDZOhxIcGUIyjAHGji2j_32u1Wem60KnIgRROI';
+
+  let supabase = null;
+
+  // Load Supabase after page is interactive
+  window.addEventListener('load', function() {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    s.onload = function() {
+      try {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Check if already logged in
+        supabase.auth.getSession().then(function(result) {
+          if (result.data && result.data.session) {
+            window.location.href = 'index.html';
+          }
+        });
+      } catch(e) {
+        console.warn('Supabase init error:', e);
+      }
+    };
+    s.onerror = function() {
+      console.warn('Supabase CDN failed to load');
+    };
+    document.body.appendChild(s);
+  });
+
+  // ── LOGIN ───────────────────────────────────────────────────────
   async function doLogin() {
     clearErrors();
     const email = document.getElementById('login-email').value.trim();
@@ -546,24 +558,36 @@ body {
     document.getElementById('login-btn-text').textContent = 'Signing in...';
     btn.classList.add('loading');
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-    btn.classList.remove('loading');
-    document.getElementById('login-btn-text').textContent = 'Sign In';
-
-    if (error) {
-      document.getElementById('login-error-msg').textContent =
-        error.message === 'Invalid login credentials'
-          ? 'Incorrect email or password. Please try again.'
-          : error.message;
+    if (!supabase) {
+      document.getElementById('login-error-msg').textContent = 'Still connecting to server, please try again in a moment.';
       document.getElementById('login-error').classList.add('show');
+      btn.classList.remove('loading');
+      document.getElementById('login-btn-text').textContent = 'Sign In';
       return;
     }
 
-    window.location.href = 'index.html';
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      btn.classList.remove('loading');
+      document.getElementById('login-btn-text').textContent = 'Sign In';
+      if (error) {
+        document.getElementById('login-error-msg').textContent =
+          error.message === 'Invalid login credentials'
+            ? 'Incorrect email or password. Please try again.'
+            : error.message;
+        document.getElementById('login-error').classList.add('show');
+        return;
+      }
+      window.location.href = 'index.html';
+    } catch(e) {
+      btn.classList.remove('loading');
+      document.getElementById('login-btn-text').textContent = 'Sign In';
+      document.getElementById('login-error-msg').textContent = 'An error occurred. Please try again.';
+      document.getElementById('login-error').classList.add('show');
+    }
   }
 
-  // ── Forgot password ─────────────────────────────────────────────
+  // ── FORGOT PASSWORD ─────────────────────────────────────────────
   async function doForgot() {
     clearErrors();
     const email = document.getElementById('forgot-email').value.trim();
@@ -578,27 +602,39 @@ body {
     document.getElementById('forgot-btn-text').textContent = 'Sending...';
     btn.classList.add('loading');
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
-    });
-
-    btn.classList.remove('loading');
-    document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
-
-    if (error) {
-      document.getElementById('forgot-error-msg').textContent = error.message;
+    if (!supabase) {
+      document.getElementById('forgot-error-msg').textContent = 'Still connecting to server, please try again in a moment.';
       document.getElementById('forgot-error').classList.add('show');
+      btn.classList.remove('loading');
+      document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
       return;
     }
 
-    document.getElementById('reset-email-shown').textContent = email;
-    showView('view-forgot-ok');
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
+      });
+      btn.classList.remove('loading');
+      document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
+      if (error) {
+        document.getElementById('forgot-error-msg').textContent = error.message;
+        document.getElementById('forgot-error').classList.add('show');
+        return;
+      }
+      document.getElementById('reset-email-shown').textContent = email;
+      showView('view-forgot-ok');
+    } catch(e) {
+      btn.classList.remove('loading');
+      document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
+      document.getElementById('forgot-error-msg').textContent = 'An error occurred. Please try again.';
+      document.getElementById('forgot-error').classList.add('show');
+    }
   }
 
-  // ── Enter key support ───────────────────────────────────────────
-  document.addEventListener('keydown', e => {
+  // ── ENTER KEY ───────────────────────────────────────────────────
+  document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
-      const activeView = document.querySelector('.view.active').id;
+      var activeView = document.querySelector('.view.active').id;
       if (activeView === 'view-login') doLogin();
       if (activeView === 'view-forgot') doForgot();
     }
