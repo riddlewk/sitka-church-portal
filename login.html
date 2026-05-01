@@ -585,7 +585,7 @@ body {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
+        redirectTo: 'https://riddlewk.github.io/sitka-church-portal/reset-password.html'
       });
       document.getElementById('forgot-btn').classList.remove('loading');
       document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
