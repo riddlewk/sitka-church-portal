@@ -512,8 +512,8 @@ body {
 
   let supabase = null;
 
-  // Load Supabase after page is interactive
-  window.addEventListener('load', function() {
+  // Load Supabase immediately — don't wait for window.load
+  function loadSupabase() {
     var s = document.createElement('script');
     s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
     s.onload = function() {
@@ -525,6 +525,7 @@ body {
             window.location.href = 'index.html';
           }
         });
+        console.log('Supabase ready');
       } catch(e) {
         console.warn('Supabase init error:', e);
       }
@@ -532,8 +533,27 @@ body {
     s.onerror = function() {
       console.warn('Supabase CDN failed to load');
     };
-    document.body.appendChild(s);
-  });
+    document.head.appendChild(s);
+  }
+  loadSupabase();
+
+  // Helper — waits up to 8 seconds for Supabase to be ready
+  function waitForSupabase() {
+    return new Promise(function(resolve, reject) {
+      if (supabase) { resolve(supabase); return; }
+      var attempts = 0;
+      var interval = setInterval(function() {
+        attempts++;
+        if (supabase) {
+          clearInterval(interval);
+          resolve(supabase);
+        } else if (attempts > 40) {
+          clearInterval(interval);
+          reject(new Error('Could not connect to server. Please check your internet connection and try again.'));
+        }
+      }, 200);
+    });
+  }
 
   // ── LOGIN ───────────────────────────────────────────────────────
   async function doLogin() {
@@ -558,16 +578,9 @@ body {
     document.getElementById('login-btn-text').textContent = 'Signing in...';
     btn.classList.add('loading');
 
-    if (!supabase) {
-      document.getElementById('login-error-msg').textContent = 'Still connecting to server, please try again in a moment.';
-      document.getElementById('login-error').classList.add('show');
-      btn.classList.remove('loading');
-      document.getElementById('login-btn-text').textContent = 'Sign In';
-      return;
-    }
-
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const sb = await waitForSupabase();
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
       btn.classList.remove('loading');
       document.getElementById('login-btn-text').textContent = 'Sign In';
       if (error) {
@@ -582,7 +595,7 @@ body {
     } catch(e) {
       btn.classList.remove('loading');
       document.getElementById('login-btn-text').textContent = 'Sign In';
-      document.getElementById('login-error-msg').textContent = 'An error occurred. Please try again.';
+      document.getElementById('login-error-msg').textContent = e.message || 'An error occurred. Please try again.';
       document.getElementById('login-error').classList.add('show');
     }
   }
@@ -602,16 +615,9 @@ body {
     document.getElementById('forgot-btn-text').textContent = 'Sending...';
     btn.classList.add('loading');
 
-    if (!supabase) {
-      document.getElementById('forgot-error-msg').textContent = 'Still connecting to server, please try again in a moment.';
-      document.getElementById('forgot-error').classList.add('show');
-      btn.classList.remove('loading');
-      document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
-      return;
-    }
-
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const sb = await waitForSupabase();
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
         redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
       });
       btn.classList.remove('loading');
@@ -626,7 +632,7 @@ body {
     } catch(e) {
       btn.classList.remove('loading');
       document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
-      document.getElementById('forgot-error-msg').textContent = 'An error occurred. Please try again.';
+      document.getElementById('forgot-error-msg').textContent = e.message || 'An error occurred. Please try again.';
       document.getElementById('forgot-error').classList.add('show');
     }
   }
