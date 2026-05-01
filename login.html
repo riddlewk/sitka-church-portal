@@ -487,8 +487,7 @@ body {
 </div>
 
 <script>
-  // ── UI FUNCTIONS — run immediately, no Supabase needed ──────────
-
+  // ── UI FUNCTIONS — always available immediately ─────────────────
   function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -506,57 +505,36 @@ body {
     inp.type = inp.type === 'password' ? 'text' : 'password';
   }
 
-  // ── SUPABASE — load asynchronously after UI is ready ───────────
+  function showLoginError(msg) {
+    document.getElementById('login-error-msg').textContent = msg;
+    document.getElementById('login-error').classList.add('show');
+    document.getElementById('login-btn').classList.remove('loading');
+    document.getElementById('login-btn-text').textContent = 'Sign In';
+  }
+
+  function showForgotError(msg) {
+    document.getElementById('forgot-error-msg').textContent = msg;
+    document.getElementById('forgot-error').classList.add('show');
+    document.getElementById('forgot-btn').classList.remove('loading');
+    document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
+  }
+</script>
+
+<script type="module">
+  // ── Load Supabase as ES module — works with GitHub Pages CSP ───
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
   const SUPABASE_URL = 'https://wmuboaugaqcweiuiqpvi.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdWJvYXVnYXFjd2VpdWlxcHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjU2NTksImV4cCI6MjA5MzAwMTY1OX0.ELglRHDZOhxIcGUIyjAHGji2j_32u1Wem60KnIgRROI';
 
-  let supabase = null;
+  const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // Load Supabase immediately — don't wait for window.load
-  function loadSupabase() {
-    var s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    s.onload = function() {
-      try {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // Check if already logged in
-        supabase.auth.getSession().then(function(result) {
-          if (result.data && result.data.session) {
-            window.location.href = 'index.html';
-          }
-        });
-        console.log('Supabase ready');
-      } catch(e) {
-        console.warn('Supabase init error:', e);
-      }
-    };
-    s.onerror = function() {
-      console.warn('Supabase CDN failed to load');
-    };
-    document.head.appendChild(s);
-  }
-  loadSupabase();
-
-  // Helper — waits up to 8 seconds for Supabase to be ready
-  function waitForSupabase() {
-    return new Promise(function(resolve, reject) {
-      if (supabase) { resolve(supabase); return; }
-      var attempts = 0;
-      var interval = setInterval(function() {
-        attempts++;
-        if (supabase) {
-          clearInterval(interval);
-          resolve(supabase);
-        } else if (attempts > 40) {
-          clearInterval(interval);
-          reject(new Error('Could not connect to server. Please check your internet connection and try again.'));
-        }
-      }, 200);
-    });
-  }
+  // Check if already logged in — redirect to portal
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) window.location.href = 'index.html';
 
   // ── LOGIN ───────────────────────────────────────────────────────
-  async function doLogin() {
+  window.doLogin = async function() {
     clearErrors();
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
@@ -574,34 +552,25 @@ body {
     }
     if (!valid) return;
 
-    const btn = document.getElementById('login-btn');
     document.getElementById('login-btn-text').textContent = 'Signing in...';
-    btn.classList.add('loading');
+    document.getElementById('login-btn').classList.add('loading');
 
     try {
-      const sb = await waitForSupabase();
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      btn.classList.remove('loading');
-      document.getElementById('login-btn-text').textContent = 'Sign In';
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        document.getElementById('login-error-msg').textContent =
-          error.message === 'Invalid login credentials'
-            ? 'Incorrect email or password. Please try again.'
-            : error.message;
-        document.getElementById('login-error').classList.add('show');
+        showLoginError(error.message === 'Invalid login credentials'
+          ? 'Incorrect email or password. Please try again.'
+          : error.message);
         return;
       }
       window.location.href = 'index.html';
     } catch(e) {
-      btn.classList.remove('loading');
-      document.getElementById('login-btn-text').textContent = 'Sign In';
-      document.getElementById('login-error-msg').textContent = e.message || 'An error occurred. Please try again.';
-      document.getElementById('login-error').classList.add('show');
+      showLoginError('An unexpected error occurred. Please try again.');
     }
-  }
+  };
 
   // ── FORGOT PASSWORD ─────────────────────────────────────────────
-  async function doForgot() {
+  window.doForgot = async function() {
     clearErrors();
     const email = document.getElementById('forgot-email').value.trim();
 
@@ -611,38 +580,32 @@ body {
       return;
     }
 
-    const btn = document.getElementById('forgot-btn');
     document.getElementById('forgot-btn-text').textContent = 'Sending...';
-    btn.classList.add('loading');
+    document.getElementById('forgot-btn').classList.add('loading');
 
     try {
-      const sb = await waitForSupabase();
-      const { error } = await sb.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: 'https://riddlewk.github.io/sitka-church-portal/index.html'
       });
-      btn.classList.remove('loading');
+      document.getElementById('forgot-btn').classList.remove('loading');
       document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
       if (error) {
-        document.getElementById('forgot-error-msg').textContent = error.message;
-        document.getElementById('forgot-error').classList.add('show');
+        showForgotError(error.message);
         return;
       }
       document.getElementById('reset-email-shown').textContent = email;
       showView('view-forgot-ok');
     } catch(e) {
-      btn.classList.remove('loading');
-      document.getElementById('forgot-btn-text').textContent = 'Send Reset Link';
-      document.getElementById('forgot-error-msg').textContent = e.message || 'An error occurred. Please try again.';
-      document.getElementById('forgot-error').classList.add('show');
+      showForgotError('An unexpected error occurred. Please try again.');
     }
-  }
+  };
 
   // ── ENTER KEY ───────────────────────────────────────────────────
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
-      var activeView = document.querySelector('.view.active').id;
-      if (activeView === 'view-login') doLogin();
-      if (activeView === 'view-forgot') doForgot();
+      const activeView = document.querySelector('.view.active').id;
+      if (activeView === 'view-login') window.doLogin();
+      if (activeView === 'view-forgot') window.doForgot();
     }
   });
 </script>
