@@ -3,8 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sitka Church of Christ — Member Portal</title>
+<title>Sitka church of Christ — Member Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<script>
+  // ── Auth guard — redirect to login if no session ────────────────
+  // Runs before page renders to prevent flash of protected content
+  (async function() {
+    try {
+      const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+      const supabase = createClient(
+        'https://wmuboaugaqcweiuiqpvi.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndtdWJvYXVnYXFjd2VpdWlxcHZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MjU2NTksImV4cCI6MjA5MzAwMTY1OX0.ELglRHDZOhxIcGUIyjAHGji2j_32u1Wem60KnIgRROI'
+      );
+      window._supabase = supabase;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.href = 'login.html';
+      }
+    } catch(e) {
+      console.warn('Auth check error:', e);
+      window.location.href = 'login.html';
+    }
+  })();
+</script>
 <style>
 :root {
   --deep-burgundy: #4A1423;
@@ -984,7 +1005,7 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   </nav>
 
   <div class="sidebar-foot">
-    <div class="signout"><span>→</span> Sign Out</div>
+    <div class="signout" onclick="doSignOut()"><span>→</span> Sign Out</div>
   </div>
 </aside>
 
@@ -1702,6 +1723,37 @@ function ptab(el, id) {
   document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active')); el.classList.add('active');
   ['pt-personal','pt-family','pt-prefs'].forEach(k => { const d = document.getElementById(k); if (d) d.style.display = k === id ? 'block' : 'none'; });
 }
+
+// Sign out
+async function doSignOut() {
+  try {
+    const supabase = window._supabase;
+    if (supabase) await supabase.auth.signOut();
+  } catch(e) {
+    console.warn('Sign out error:', e);
+  }
+  window.location.href = 'login.html';
+}
+
+// Show logged-in user email in sidebar
+window.addEventListener('load', async function() {
+  try {
+    const supabase = window._supabase;
+    if (!supabase) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session && session.user) {
+      const email = session.user.email;
+      // Update the member name display with email until we have profile data
+      const nameEl = document.querySelector('.member-info .mname');
+      if (nameEl && nameEl.textContent === 'Robert Williams') {
+        // Only update if still showing placeholder
+        // Will be replaced with real profile data in a future phase
+      }
+    }
+  } catch(e) {
+    console.warn('Session display error:', e);
+  }
+});
 </script>
 </body>
 </html>
