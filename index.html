@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sitka church of Christ — Member Portal</title>
+<title>Sitka church of Christ -- Member Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <script>
-  // ── Auth guard — redirect to login if no session ────────────────
-  // Runs before page renders to prevent flash of protected content
   (async function() {
     try {
       const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
@@ -19,7 +17,15 @@
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         window.location.href = 'login.html';
+        return;
       }
+      // Fetch profile from database
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, role')
+        .eq('id', session.user.id)
+        .single();
+      window._profile = profile || null;
     } catch(e) {
       console.warn('Auth check error:', e);
       window.location.href = 'login.html';
@@ -76,9 +82,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ═══════════════════════════════════════════════
-   STAINED-GLASS PATTERN BACKGROUNDS
-═══════════════════════════════════════════════ */
 .glass-bg {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background:
@@ -87,9 +90,6 @@ body {
     radial-gradient(ellipse 400px 300px at 50% 90%, rgba(42,82,153,0.03) 0%, transparent 70%);
 }
 
-/* ═══════════════════════════════════════════════
-   SIDEBAR
-═══════════════════════════════════════════════ */
 .sidebar {
   width: 252px;
   min-width: 252px;
@@ -103,7 +103,6 @@ body {
   overflow: hidden;
 }
 
-/* Decorative top arc */
 .sidebar::before {
   content: '';
   position: absolute;
@@ -113,7 +112,6 @@ body {
   z-index: 0;
 }
 
-/* Subtle cross watermark */
 .sidebar::after {
   content: '✝';
   position: absolute;
@@ -226,9 +224,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 }
 .signout:hover { color: rgba(255,255,255,0.65); }
 
-/* ═══════════════════════════════════════════════
-   MAIN
-═══════════════════════════════════════════════ */
 .main { margin-left: 252px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
 
 .topbar {
@@ -241,7 +236,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   box-shadow: 0 1px 12px rgba(28,16,8,0.07);
 }
 
-/* Decorative top stripe */
 .topbar::before {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -294,18 +288,10 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 
 .content { padding: 26px 30px; flex: 1; position: relative; z-index: 1; }
 
-/* ═══════════════════════════════════════════════
-   SECTIONS
-═══════════════════════════════════════════════ */
 .section { display: none; animation: fadeIn 0.25s ease; }
 .section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-/* ═══════════════════════════════════════════════
-   REUSABLE COMPONENTS
-═══════════════════════════════════════════════ */
-
-/* Cards */
 .card {
   background: #fff;
   border-radius: var(--radius-lg);
@@ -335,7 +321,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 
 .card-body { padding: 18px 22px; }
 
-/* Buttons */
 .btn {
   padding: 7px 16px; border-radius: var(--radius);
   font-family: 'Lato', sans-serif; font-size: 12.5px; font-weight: 700;
@@ -361,7 +346,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .btn-forest:hover { background: var(--sage); }
 .btn-danger { background: var(--burgundy); color: #fff; }
 
-/* Tags */
 .tag {
   display: inline-block; padding: 2px 9px;
   border-radius: 20px; font-size: 10px; font-weight: 700;
@@ -373,7 +357,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .tag-youth   { background: rgba(42,82,153,0.1); color: var(--cobalt);       border: 1px solid rgba(42,82,153,0.12); }
 .tag-event   { background: rgba(168,104,15,0.1); color: var(--amber);       border: 1px solid rgba(168,104,15,0.15); }
 
-/* Form */
 .form-lbl {
   display: block; font-size: 10.5px; font-weight: 700;
   color: var(--ink-light); margin-bottom: 5px;
@@ -396,12 +379,8 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .form-row { display: flex; gap: 10px; }
 
-/* Divider */
 .divider { height: 1px; background: var(--warm-linen); margin: 14px 0; }
 
-/* ═══════════════════════════════════════════════
-   BANNER / VERSE
-═══════════════════════════════════════════════ */
 .verse-banner {
   background: linear-gradient(120deg, var(--deep-navy) 0%, var(--navy) 55%, var(--deep-burgundy) 100%);
   border-radius: var(--radius-lg);
@@ -412,7 +391,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   box-shadow: var(--shadow-md);
 }
 
-/* Stained glass geometry */
 .verse-banner::before {
   content: '';
   position: absolute; top: -30px; right: -20px;
@@ -434,7 +412,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   max-width: 680px; position: relative;
 }
 
-/* Gold quotation mark */
 .verse-text::before {
   content: '\201C';
   font-size: 60px; line-height: 0;
@@ -449,7 +426,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   font-weight: 700; text-transform: uppercase;
 }
 
-/* Day / Greeting */
 .greeting-row {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 20px;
@@ -469,9 +445,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .date-badge .db-month { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); }
 .date-badge .db-year { font-size: 10px; color: var(--ink-faint); }
 
-/* ═══════════════════════════════════════════════
-   STATS GRID
-═══════════════════════════════════════════════ */
 .stats-grid {
   display: grid; grid-template-columns: repeat(4,1fr); gap: 14px;
   margin-bottom: 22px;
@@ -501,12 +474,8 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .sc-lbl { font-size: 11px; color: var(--ink-light); margin-top: 3px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
 .sc-sub { font-size: 11px; color: var(--sage); margin-top: 5px; font-weight: 700; }
 
-/* ═══════════════════════════════════════════════
-   DASHBOARD GRID
-═══════════════════════════════════════════════ */
 .dash-grid { display: grid; grid-template-columns: 1fr 330px; gap: 18px; }
 
-/* Events */
 .ev-list { display: flex; flex-direction: column; gap: 8px; }
 
 .ev-item {
@@ -530,7 +499,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .ev-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
 .ev-meta { font-size: 11.5px; color: var(--ink-light); margin-top: 2px; }
 
-/* Quick links */
 .ql-list { display: flex; flex-direction: column; gap: 8px; }
 .ql {
   display: flex; align-items: center; gap: 11px;
@@ -551,7 +519,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .ql-txt .qs { font-size: 11px; color: var(--ink-faint); }
 .ql-arr { margin-left: auto; color: var(--ink-faint); font-size: 14px; font-weight: 700; }
 
-/* Announcements */
 .ann-item {
   padding: 12px 0; border-bottom: 1px solid var(--warm-linen);
 }
@@ -560,9 +527,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .ann-body { font-size: 12px; color: var(--ink-light); margin-top: 3px; line-height: 1.4; }
 .ann-date { font-size: 10.5px; color: var(--gold); font-weight: 700; margin-top: 5px; }
 
-/* ═══════════════════════════════════════════════
-   CALENDAR
-═══════════════════════════════════════════════ */
 .cal-wrap { display: grid; grid-template-columns: 1fr 290px; gap: 18px; }
 
 .cal-hd {
@@ -625,14 +589,10 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .ue-time { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
 .ue-rsvp { font-size: 11px; color: var(--cobalt); font-weight: 700; margin-top: 5px; cursor: pointer; }
 
-/* Legend */
 .cal-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
 .cl-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink-light); }
 .cl-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-/* ═══════════════════════════════════════════════
-   DIRECTORY
-═══════════════════════════════════════════════ */
 .dir-controls {
   display: flex; gap: 8px; margin-bottom: 18px;
   align-items: center; flex-wrap: wrap;
@@ -676,9 +636,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .mem-since { font-size: 10px; color: var(--ink-faint); margin-top: 5px; }
 .mem-acts { display: flex; gap: 5px; justify-content: center; margin-top: 11px; }
 
-/* ═══════════════════════════════════════════════
-   GIVING
-═══════════════════════════════════════════════ */
 .giving-wrap { display: grid; grid-template-columns: 1fr 320px; gap: 20px; }
 
 .amt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 18px; }
@@ -756,9 +713,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .gh-date { font-size: 11px; color: var(--ink-faint); margin-top: 1px; }
 .gh-amt { font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--forest); font-weight: 700; }
 
-/* ═══════════════════════════════════════════════
-   MESSAGES
-═══════════════════════════════════════════════ */
 .msg-wrap {
   display: grid; grid-template-columns: 268px 1fr; gap: 0;
   height: calc(100vh - 152px);
@@ -822,9 +776,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 }
 .msg-send:hover { transform: scale(1.05); }
 
-/* ═══════════════════════════════════════════════
-   NOTIFICATIONS
-═══════════════════════════════════════════════ */
 .notif-list { display: flex; flex-direction: column; gap: 9px; }
 .notif {
   display: flex; gap: 13px; padding: 15px 16px;
@@ -849,9 +800,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .notif-x { align-self: flex-start; cursor: pointer; font-size: 17px; color: var(--ink-faint); padding: 1px; transition: var(--tr); }
 .notif-x:hover { color: var(--burgundy); }
 
-/* ═══════════════════════════════════════════════
-   MINISTRIES
-═══════════════════════════════════════════════ */
 .min-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 18px; }
 .min-card {
   background: #fff; border-radius: var(--radius-lg); overflow: hidden;
@@ -871,9 +819,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .min-lead { font-size: 11.5px; color: var(--ink-faint); }
 .enrolled { background: rgba(26,61,43,0.1); color: var(--forest); font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 
-/* ═══════════════════════════════════════════════
-   PROFILE
-═══════════════════════════════════════════════ */
 .prof-wrap { display: grid; grid-template-columns: 262px 1fr; gap: 20px; }
 .prof-card { text-align: center; padding: 28px 20px; }
 .prof-ava {
@@ -921,9 +866,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 }
 .tog input:checked ~ .tog-thumb { transform: translateX(20px); }
 
-/* ═══════════════════════════════════════════════
-   MODALS
-═══════════════════════════════════════════════ */
 .overlay {
   position: fixed; inset: 0;
   background: rgba(15,20,30,0.65);
@@ -944,7 +886,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   border-bottom: 1px solid var(--warm-linen);
   display: flex; align-items: center; justify-content: space-between;
 }
-/* Stained-glass stripe on modal */
 .modal-hd::after {
   content: '';
   position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -958,7 +899,6 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 .modal-bd { padding: 18px 22px; }
 .modal-ft { padding: 14px 22px; border-top: 1px solid var(--warm-linen); display: flex; gap: 8px; justify-content: flex-end; }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--warm-stone); border-radius: 3px; }
@@ -979,10 +919,10 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   </div>
 
   <div class="sidebar-member">
-    <div class="member-ava">RW</div>
+    <div class="member-ava" id="sidebar-initials">…</div>
     <div class="member-info">
-      <span class="mname">Robert Williams</span>
-      <span class="mrole">Elder · Worship Ministry</span>
+      <span class="mname" id="sidebar-name">Loading…</span>
+      <span class="mrole" id="sidebar-role"></span>
     </div>
   </div>
 
@@ -1031,19 +971,19 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
     <section id="sec-dashboard" class="section active">
       <div class="greeting-row">
         <div class="greeting-text">
-          <h2>Peace be with you, Robert.</h2>
+          <h2 id="dash-greeting">Peace be with you.</h2>
           <p>Here's what's happening at Sitka Church of Christ this week.</p>
         </div>
         <div class="date-badge">
-          <div class="db-month">May</div>
-          <div class="db-day">27</div>
-          <div class="db-year">2025</div>
+          <div class="db-month" id="db-month"></div>
+          <div class="db-day" id="db-day"></div>
+          <div class="db-year" id="db-year"></div>
         </div>
       </div>
 
       <div class="verse-banner">
         <div class="verse-text">I can do all things through Christ who strengthens me.</div>
-        <div class="verse-ref">— Philippians 4:13 &nbsp;·&nbsp; Verse of the Week</div>
+        <div class="verse-ref">-- Philippians 4:13 &nbsp;·&nbsp; Verse of the Week</div>
       </div>
 
       <div class="stats-grid">
@@ -1102,13 +1042,13 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
             <div class="card-hd"><div class="card-title">Announcements</div></div>
             <div class="card-body" style="padding-top:4px">
               <div class="ann-item">
-                <div class="ann-title">VBS Registration Open — July 14–18</div>
+                <div class="ann-title">VBS Registration Open -- July 14–18</div>
                 <div class="ann-body">Vacation Bible School sign-up is open for children ages 4–12. Register by June 30. Helpers also needed!</div>
                 <div class="ann-date">Posted 2 days ago</div>
               </div>
               <div class="ann-item">
                 <div class="ann-title">New Series: "Walking by Faith"</div>
-                <div class="ann-body">Beginning June 1st — a 6-week study through Hebrews. Workbooks available at the information table.</div>
+                <div class="ann-body">Beginning June 1st -- a 6-week study through Hebrews. Workbooks available at the information table.</div>
                 <div class="ann-date">Posted 4 days ago</div>
               </div>
               <div class="ann-item" style="border-bottom:none;padding-bottom:0">
@@ -1282,7 +1222,7 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
           <div class="total-card">
             <div class="tc-lbl">Your 2025 Giving Total</div>
             <div class="tc-val">$2,850.00</div>
-            <div class="tc-period">January — May 2025</div>
+            <div class="tc-period">January -- May 2025</div>
           </div>
           <div class="card">
             <div class="card-hd">
@@ -1312,7 +1252,7 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
           <div class="msg-threads">
             <div class="mt active" onclick="selThread(this,'Preacher Don Campbell','DC','var(--burgundy)','don')">
               <div class="mt-ava" style="background:var(--burgundy)">DC</div>
-              <div class="mt-info"><div class="mt-name">Preacher Don Campbell</div><div class="mt-prev">See you Sunday morning, Robert…</div></div>
+              <div class="mt-info"><div class="mt-name">Preacher Don Campbell</div><div class="mt-prev">See you Sunday morning…</div></div>
               <div class="mt-right"><div class="mt-time">9:44 AM</div><div class="mt-unread"></div></div>
             </div>
             <div class="mt" onclick="selThread(this,'Worship Leaders Group','WL','var(--cobalt)','worship')">
@@ -1354,11 +1294,11 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
         <button class="btn btn-outline btn-sm" onclick="markRead()">Mark All Read</button>
       </div>
       <div class="notif-list">
-        <div class="notif unread"><div class="notif-ico ni-bur">🙏</div><div class="notif-cnt"><div class="notif-title">Prayer Request — Sister Helen Bradford</div><div class="notif-msg">Helen has asked for prayers for her recovery. Please keep her in your daily prayers.</div><div class="notif-time">15 minutes ago</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-bur">🙏</div><div class="notif-cnt"><div class="notif-title">Prayer Request -- Sister Helen Bradford</div><div class="notif-msg">Helen has asked for prayers for her recovery. Please keep her in your daily prayers.</div><div class="notif-time">15 minutes ago</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
         <div class="notif unread"><div class="notif-ico ni-gld">📅</div><div class="notif-cnt"><div class="notif-title">Reminder: Wednesday Bible Class Tonight</div><div class="notif-msg">Bible class meets tonight at 7:00 PM in the Fellowship Hall. Study topic: Romans 8.</div><div class="notif-time">2 hours ago</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
         <div class="notif unread"><div class="notif-ico ni-for">👋</div><div class="notif-cnt"><div class="notif-title">New Members: James &amp; Carol Peterson</div><div class="notif-msg">James and Carol Peterson placed membership with us last Sunday. Please give them a warm welcome!</div><div class="notif-time">Yesterday at 2:00 PM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
-        <div class="notif unread"><div class="notif-ico ni-cob">💳</div><div class="notif-cnt"><div class="notif-title">Giving Receipt — $100.00</div><div class="notif-msg">Your contribution of $100.00 on May 25 has been recorded. Thank you for your faithful stewardship.</div><div class="notif-time">May 25 at 10:30 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
-        <div class="notif unread"><div class="notif-ico ni-bur">📣</div><div class="notif-cnt"><div class="notif-title">VBS Volunteers Still Needed — July 14–18</div><div class="notif-msg">We need 6 more volunteers for Vacation Bible School. See Brother Tom Bradford to sign up.</div><div class="notif-time">May 23 at 9:00 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-cob">💳</div><div class="notif-cnt"><div class="notif-title">Giving Receipt -- $100.00</div><div class="notif-msg">Your contribution of $100.00 on May 25 has been recorded. Thank you for your faithful stewardship.</div><div class="notif-time">May 25 at 10:30 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
+        <div class="notif unread"><div class="notif-ico ni-bur">📣</div><div class="notif-cnt"><div class="notif-title">VBS Volunteers Still Needed -- July 14–18</div><div class="notif-msg">We need 6 more volunteers for Vacation Bible School. See Brother Tom Bradford to sign up.</div><div class="notif-time">May 23 at 9:00 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
         <div class="notif"><div class="notif-ico ni-gld">📄</div><div class="notif-cnt"><div class="notif-title">April Giving Statement Available</div><div class="notif-msg">Your April 2025 giving statement is ready to view in the Giving section.</div><div class="notif-time">May 1 at 8:00 AM</div></div><div class="notif-x" onclick="dismissN(this)">×</div></div>
       </div>
     </section>
@@ -1370,7 +1310,7 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
         <div class="min-card">
           <div class="min-banner" style="background:linear-gradient(135deg,rgba(74,20,35,0.08),rgba(162,51,80,0.12))">🎵</div>
           <div class="min-body"><div class="min-name">Worship Ministry</div><div class="min-desc">Lead the congregation in a cappella singing during Sunday worship and special events, in the tradition of the Churches of Christ.</div><div class="min-meta"><span>📅 Sundays 8:30 AM</span><span>👥 28 members</span></div></div>
-          <div class="min-foot"><div class="min-lead">Lead: Elder Robert Williams</div><span class="enrolled">✓ Enrolled</span></div>
+          <div class="min-foot"><div class="min-lead" id="min-worship-lead">Lead: Elder</div><span class="enrolled">✓ Enrolled</span></div>
         </div>
         <div class="min-card">
           <div class="min-banner" style="background:linear-gradient(135deg,rgba(15,30,58,0.08),rgba(42,82,153,0.12))">📖</div>
@@ -1405,19 +1345,17 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
       <div class="prof-wrap">
         <div>
           <div class="card prof-card">
-            <div class="prof-ava">RW</div>
-            <div class="prof-name">Robert Williams</div>
-            <div class="prof-role">Elder · Sitka Church of Christ</div>
+            <div class="prof-ava" id="prof-ava">…</div>
+            <div class="prof-name" id="prof-name">Loading…</div>
+            <div class="prof-role" id="prof-role">Sitka Church of Christ</div>
             <div class="prof-badges">
-              <span class="pb pb-bur">Elder</span>
-              <span class="pb pb-nav">Worship</span>
-              <span class="pb pb-for">Outreach</span>
+              <span class="pb pb-bur" id="prof-badge-role">Member</span>
             </div>
             <div class="prof-stats">
-              <div class="ps-box"><div class="ps-val">11</div><div class="ps-lbl">Yrs Member</div></div>
+              <div class="ps-box"><div class="ps-val">--</div><div class="ps-lbl">Yrs Member</div></div>
               <div class="ps-box"><div class="ps-val">$2,850</div><div class="ps-lbl">Given '25</div></div>
-              <div class="ps-box"><div class="ps-val">3</div><div class="ps-lbl">Ministries</div></div>
-              <div class="ps-box"><div class="ps-val">52</div><div class="ps-lbl">Events</div></div>
+              <div class="ps-box"><div class="ps-val">--</div><div class="ps-lbl">Ministries</div></div>
+              <div class="ps-box"><div class="ps-val">--</div><div class="ps-lbl">Events</div></div>
             </div>
             <button class="btn btn-outline" style="width:100%;justify-content:center;margin-top:14px">Edit Photo</button>
           </div>
@@ -1432,16 +1370,16 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
 
           <div id="pt-personal" class="card" style="padding:22px">
             <div class="form-2col">
-              <div class="form-group"><label class="form-lbl">First Name</label><input class="form-inp" value="Robert"></div>
-              <div class="form-group"><label class="form-lbl">Last Name</label><input class="form-inp" value="Williams"></div>
-              <div class="form-group"><label class="form-lbl">Date of Birth</label><input class="form-inp" type="date" value="1964-08-22"></div>
-              <div class="form-group"><label class="form-lbl">Marital Status</label><select class="form-sel"><option selected>Married</option><option>Single</option><option>Widowed</option><option>Divorced</option></select></div>
-              <div class="form-group"><label class="form-lbl">Occupation</label><input class="form-inp" value="Commercial Fisherman"></div>
-              <div class="form-group"><label class="form-lbl">Member Since</label><input class="form-inp" value="January 2014" disabled style="background:var(--parchment);color:var(--ink-faint)"></div>
+              <div class="form-group"><label class="form-lbl">First Name</label><input class="form-inp" id="prof-inp-first" value=""></div>
+              <div class="form-group"><label class="form-lbl">Last Name</label><input class="form-inp" id="prof-inp-last" value=""></div>
+              <div class="form-group"><label class="form-lbl">Date of Birth</label><input class="form-inp" type="date"></div>
+              <div class="form-group"><label class="form-lbl">Marital Status</label><select class="form-sel"><option>Married</option><option>Single</option><option>Widowed</option><option>Divorced</option></select></div>
+              <div class="form-group"><label class="form-lbl">Occupation</label><input class="form-inp" id="prof-inp-occ" value=""></div>
+              <div class="form-group"><label class="form-lbl">Member Since</label><input class="form-inp" id="prof-inp-since" disabled style="background:var(--parchment);color:var(--ink-faint)"></div>
             </div>
-            <div class="form-group"><label class="form-lbl">Address</label><input class="form-inp" value="412 Harbor View Drive, Sitka, AK 99835"></div>
-            <div class="form-group"><label class="form-lbl">Email</label><input class="form-inp" type="email" value="robert.williams@email.com"></div>
-            <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Phone</label><input class="form-inp" value="(907) 555-0142"></div>
+            <div class="form-group"><label class="form-lbl">Address</label><input class="form-inp" id="prof-inp-addr" value=""></div>
+            <div class="form-group"><label class="form-lbl">Email</label><input class="form-inp" type="email" id="prof-inp-email" value=""></div>
+            <div class="form-group" style="margin-bottom:0"><label class="form-lbl">Phone</label><input class="form-inp" id="prof-inp-phone" value=""></div>
             <div style="display:flex;gap:8px;margin-top:16px">
               <button class="btn btn-gold">Save Changes</button>
               <button class="btn btn-outline">Cancel</button>
@@ -1451,17 +1389,7 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
           <div id="pt-family" class="card" style="padding:22px;display:none">
             <p style="font-size:12.5px;color:var(--ink-light);margin-bottom:16px">Family members associated with your household in our directory.</p>
             <div style="display:flex;flex-direction:column;gap:8px">
-              <div style="display:flex;align-items:center;gap:11px;padding:13px;background:var(--parchment);border-radius:var(--radius);border:1px solid var(--parchment-dark)">
-                <div class="mt-ava" style="background:var(--cobalt);width:40px;height:40px">MW</div>
-                <div><div style="font-size:13px;font-weight:700">Margaret Williams</div><div style="font-size:11px;color:var(--ink-faint)">Spouse · Also a member</div></div>
-                <button class="btn btn-outline btn-sm" style="margin-left:auto">View</button>
-              </div>
-              <div style="display:flex;align-items:center;gap:11px;padding:13px;background:var(--parchment);border-radius:var(--radius);border:1px solid var(--parchment-dark)">
-                <div class="mt-ava" style="background:var(--sage);width:40px;height:40px">JW</div>
-                <div><div style="font-size:13px;font-weight:700">Jacob Williams</div><div style="font-size:11px;color:var(--ink-faint)">Son · Youth Ministry</div></div>
-                <button class="btn btn-outline btn-sm" style="margin-left:auto">View</button>
-              </div>
-              <button class="btn btn-outline btn-sm" style="align-self:flex-start;margin-top:4px">+ Add Family Member</button>
+              <button class="btn btn-outline btn-sm" style="align-self:flex-start">+ Add Family Member</button>
             </div>
           </div>
 
@@ -1536,14 +1464,14 @@ nav { flex: 1; overflow-y: auto; padding: 10px 0; position: relative; z-index: 1
   <div class="modal">
     <div class="modal-bd" style="text-align:center;padding:36px 28px">
       <div style="font-size:54px;margin-bottom:14px">🙏</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--deep-navy);margin-bottom:7px">Thank You, Robert.</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--deep-navy);margin-bottom:7px" id="ok-thank">Thank You.</div>
       <p style="font-size:13px;color:var(--ink-light);margin-bottom:18px">Your contribution has been received. A receipt has been sent to your email.</p>
       <div style="background:var(--gold-pale);border-radius:var(--radius);padding:14px;border:1px solid rgba(168,104,15,0.18);margin-bottom:16px">
         <div style="font-size:11px;color:var(--ink-faint)">Amount Contributed</div>
         <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--deep-navy)" id="ok-amt">$50.00</div>
         <div style="font-size:11px;color:var(--amber);font-weight:700">General Contribution · One-Time</div>
       </div>
-      <p style="font-size:12px;font-style:italic;color:var(--ink-light);font-family:'Cormorant Garamond',serif;line-height:1.5">"Each one must give as he has decided in his heart, not reluctantly or under compulsion, for God loves a cheerful giver." — 2 Cor 9:7</p>
+      <p style="font-size:12px;font-style:italic;color:var(--ink-light);font-family:'Cormorant Garamond',serif;line-height:1.5">"Each one must give as he has decided in his heart, not reluctantly or under compulsion, for God loves a cheerful giver." -- 2 Cor 9:7</p>
       <button class="btn btn-gold" style="margin-top:18px" onclick="closeM('ov-give-ok')">Done</button>
     </div>
   </div>
@@ -1571,15 +1499,69 @@ function nav(id, el) {
   document.getElementById('breadcrumb').textContent = bcLabels[id] || '';
 }
 
+// ── Apply real profile data ──────────────────
+function applyProfile(profile, email) {
+  const firstName  = profile?.first_name  || '';
+  const lastName   = profile?.last_name   || '';
+  const role       = profile?.role        || 'member';
+  const fullName   = (firstName + ' ' + lastName).trim() || email || 'Member';
+  const initials   = ((firstName[0] || '') + (lastName[0] || '')).toUpperCase() || '?';
+  const roleLabel  = role.charAt(0).toUpperCase() + role.slice(1);
+
+  // Sidebar
+  document.getElementById('sidebar-initials').textContent = initials;
+  document.getElementById('sidebar-name').textContent     = fullName;
+  document.getElementById('sidebar-role').textContent     = roleLabel;
+
+  // Dashboard greeting
+  document.getElementById('dash-greeting').textContent =
+    'Peace be with you' + (firstName ? ', ' + firstName : '') + '.';
+
+  // Profile section
+  document.getElementById('prof-ava').textContent          = initials;
+  document.getElementById('prof-name').textContent         = fullName;
+  document.getElementById('prof-role').textContent         = roleLabel + ' · Sitka Church of Christ';
+  document.getElementById('prof-badge-role').textContent   = roleLabel;
+
+  // Profile form fields
+  document.getElementById('prof-inp-first').value = firstName;
+  document.getElementById('prof-inp-last').value  = lastName;
+  document.getElementById('prof-inp-email').value = email || '';
+  if (profile?.phone)   document.getElementById('prof-inp-phone').value   = profile.phone;
+  if (profile?.address) document.getElementById('prof-inp-addr').value    = profile.address;
+  if (profile?.joined_date) {
+    const d = new Date(profile.joined_date);
+    document.getElementById('prof-inp-since').value =
+      d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  }
+
+  // Worship ministry lead label
+  if (role === 'elder' || role === 'admin') {
+    const leadEl = document.getElementById('min-worship-lead');
+    if (leadEl) leadEl.textContent = 'Lead: ' + roleLabel + ' ' + fullName;
+  }
+
+  // Giving thank-you modal
+  document.getElementById('ok-thank').textContent =
+    'Thank You' + (firstName ? ', ' + firstName : '') + '.';
+}
+
+// ── Date badge ──────────────────────────────
+(function() {
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('db-month').textContent = months[now.getMonth()];
+  document.getElementById('db-day').textContent   = now.getDate();
+  document.getElementById('db-year').textContent  = now.getFullYear();
+})();
+
 // ── Members data ─────────────────────────────
 const MEM = [
   { n:'Preacher Don Campbell', r:'Preacher', i:'DC', c:'#4A1423' },
-  { n:'Elder Robert Williams', r:'Elder · Worship Lead', i:'RW', c:'#6B1D30' },
   { n:'Elder James Foster', r:'Elder', i:'JF', c:'#0F1E3A' },
   { n:'Deacon Tom Bradford', r:'Deacon · Benevolence', i:'TB', c:'#1A3D2B' },
   { n:'Sister Patricia Moore', r:'Ladies\' Class Lead', i:'PM', c:'#2A5239' },
   { n:'Brother Kevin Marsh', r:'Youth Ministry Lead', i:'KM', c:'#2A5299' },
-  { n:'Sister Margaret Williams', r:'Ladies\' Class', i:'MW', c:'#3B6EC2' },
   { n:'Brother Harold Jensen', r:'Worship Ministry', i:'HJ', c:'#7A4E0A' },
   { n:'Sister Carol Peterson', r:'New Member', i:'CP', c:'#4A7C59' },
   { n:'Brother James Peterson', r:'New Member', i:'JP', c:'#8B2840' },
@@ -1602,7 +1584,6 @@ function renderMem(list) {
 renderMem(MEM);
 function filterMem(q) { renderMem(MEM.filter(m => m.n.toLowerCase().includes(q.toLowerCase()) || m.r.toLowerCase().includes(q.toLowerCase()))); }
 
-// Filter chips
 document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', function() {
   this.closest('.dir-controls').querySelectorAll('.fchip').forEach(x => x.classList.remove('active'));
   this.classList.add('active');
@@ -1626,7 +1607,7 @@ function pickCustom(btn) {
 }
 function pickFund(el) { document.querySelectorAll('.fund-opt').forEach(f => f.classList.remove('sel')); el.classList.add('sel'); }
 function pickFreq(t) {
-  ['once','weekly','monthly'].forEach(id => { const b = document.getElementById('fr-' + id); b.classList.remove('sel'); });
+  ['once','weekly','monthly'].forEach(id => document.getElementById('fr-' + id).classList.remove('sel'));
   document.getElementById('fr-' + t).classList.add('sel');
 }
 function doGiving() {
@@ -1637,16 +1618,16 @@ function doGiving() {
 // ── Messages ─────────────────────────────────
 const CONVOS = {
   don: [
-    { s:false, t:"Good morning, Brother Robert! Just confirming — are we still doing a pre-worship gathering at 8:30 this Sunday? I'd like the elders together before services.", ti:"9:38 AM", nm:"Don Campbell" },
+    { s:false, t:"Good morning, Brother! Just confirming -- are we still doing a pre-worship gathering at 8:30 this Sunday? I'd like the elders together before services.", ti:"9:38 AM", nm:"Don Campbell" },
     { s:true,  t:"Yes, absolutely. I'll be there at 8:20 to make sure the room is ready. Should we also include the deacons?", ti:"9:41 AM" },
-    { s:false, t:"Good idea — please invite Tom Bradford as well. See you Sunday morning, Robert. Grace and peace to you.", ti:"9:44 AM", nm:"Don Campbell" },
+    { s:false, t:"Good idea -- please invite Tom Bradford as well. See you Sunday morning. Grace and peace to you.", ti:"9:44 AM", nm:"Don Campbell" },
   ],
   worship: [
     { s:false, t:"Brothers, the song list for Sunday morning is posted in the foyer binder. Leading: How Great Thou Art, Blessed Assurance, Lord I Need You.", ti:"Yesterday 5:00 PM", nm:"Kevin Marsh" },
     { s:true,  t:"Thank you, Kevin. I'll review tonight. Let's plan to run through once at 8:30 before services.", ti:"Yesterday 5:45 PM" },
   ],
   pat: [
-    { s:false, t:"Brother Robert, I just wanted to reach out and thank you for visiting my mother last Tuesday. She hasn't stopped talking about it — it truly blessed her.", ti:"Monday 1:15 PM", nm:"Patricia Moore" },
+    { s:false, t:"I just wanted to reach out and thank you for visiting my mother last Tuesday. She hasn't stopped talking about it -- it truly blessed her.", ti:"Monday 1:15 PM", nm:"Patricia Moore" },
     { s:true,  t:"It was my privilege, Sister Patricia. Please let her know we are all praying for her continued recovery.", ti:"Monday 2:00 PM" },
   ],
   elders: [
@@ -1715,7 +1696,6 @@ function closeM(id) { document.getElementById(id).classList.remove('open'); }
 function submitPrayer() { closeM('ov-prayer'); setTimeout(() => alert('🙏 Your prayer request has been submitted. Our prayer team will be with you.'), 200); }
 function submitMin() { closeM('ov-ministry'); setTimeout(() => alert('✅ Your registration has been submitted. You will be contacted by the ministry leader soon.'), 200); }
 
-// Close on backdrop click
 document.querySelectorAll('.overlay').forEach(ov => ov.addEventListener('click', e => { if (e.target === ov) closeM(ov.id); }));
 
 // Profile tabs
@@ -1724,7 +1704,7 @@ function ptab(el, id) {
   ['pt-personal','pt-family','pt-prefs'].forEach(k => { const d = document.getElementById(k); if (d) d.style.display = k === id ? 'block' : 'none'; });
 }
 
-// Sign out
+// ── Sign out ─────────────────────────────────
 async function doSignOut() {
   try {
     const supabase = window._supabase;
@@ -1735,23 +1715,17 @@ async function doSignOut() {
   window.location.href = 'login.html';
 }
 
-// Show logged-in user email in sidebar
+// ── Load profile on page ready ───────────────
 window.addEventListener('load', async function() {
   try {
     const supabase = window._supabase;
     if (!supabase) return;
     const { data: { session } } = await supabase.auth.getSession();
-    if (session && session.user) {
-      const email = session.user.email;
-      // Update the member name display with email until we have profile data
-      const nameEl = document.querySelector('.member-info .mname');
-      if (nameEl && nameEl.textContent === 'Robert Williams') {
-        // Only update if still showing placeholder
-        // Will be replaced with real profile data in a future phase
-      }
-    }
+    if (!session) return;
+    const profile = window._profile;
+    applyProfile(profile, session.user.email);
   } catch(e) {
-    console.warn('Session display error:', e);
+    console.warn('Profile load error:', e);
   }
 });
 </script>
