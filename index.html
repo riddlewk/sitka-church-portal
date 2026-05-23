@@ -1556,23 +1556,25 @@ function applyProfile(profile, email) {
 })();
 
 // ── Members data ─────────────────────────────
-const MEM = [
-  { n:'Preacher Don Campbell', r:'Preacher', i:'DC', c:'#4A1423' },
-  { n:'Elder James Foster', r:'Elder', i:'JF', c:'#0F1E3A' },
-  { n:'Deacon Tom Bradford', r:'Deacon · Benevolence', i:'TB', c:'#1A3D2B' },
-  { n:'Sister Patricia Moore', r:'Ladies\' Class Lead', i:'PM', c:'#2A5239' },
-  { n:'Brother Kevin Marsh', r:'Youth Ministry Lead', i:'KM', c:'#2A5299' },
-  { n:'Brother Harold Jensen', r:'Worship Ministry', i:'HJ', c:'#7A4E0A' },
-  { n:'Sister Carol Peterson', r:'New Member', i:'CP', c:'#4A7C59' },
-  { n:'Brother James Peterson', r:'New Member', i:'JP', c:'#8B2840' },
-  { n:'Sister Betty Nash', r:'Ladies\' Class', i:'BN', c:'#1A3058' },
-  { n:'Brother Samuel Crow', r:'Worship Ministry', i:'SC', c:'#2A5299' },
+let MEM = [];
+const AVA_COLORS = [
+  '#4A1423','#0F1E3A','#1A3D2B','#2A5299','#7A4E0A',
+  '#2A5239','#8B2840','#1A3058','#3D4A1A','#4A3D6B'
 ];
 
+function memberColor(index) {
+  return AVA_COLORS[index % AVA_COLORS.length];
+}
+
 function renderMem(list) {
-  document.getElementById('mem-grid').innerHTML = list.map(m => `
+  const grid = document.getElementById('mem-grid');
+  if (list.length === 0) {
+    grid.innerHTML = '<p style="color:var(--ink-faint);font-size:13px;grid-column:1/-1">No members found.</p>';
+    return;
+  }
+  grid.innerHTML = list.map((m, i) => `
     <div class="mem-card">
-      <div class="mem-ava" style="background:linear-gradient(135deg,${m.c},${m.c}bb)">${m.i}</div>
+      <div class="mem-ava" style="background:linear-gradient(135deg,${memberColor(i)},${memberColor(i)}bb)">${m.i}</div>
       <div class="mem-name">${m.n}</div>
       <div class="mem-role">${m.r}</div>
       <div class="mem-acts">
@@ -1581,8 +1583,40 @@ function renderMem(list) {
       </div>
     </div>`).join('');
 }
-renderMem(MEM);
-function filterMem(q) { renderMem(MEM.filter(m => m.n.toLowerCase().includes(q.toLowerCase()) || m.r.toLowerCase().includes(q.toLowerCase()))); }
+
+function filterMem(q) {
+  const filtered = MEM.filter(m =>
+    m.n.toLowerCase().includes(q.toLowerCase()) ||
+    m.r.toLowerCase().includes(q.toLowerCase())
+  );
+  renderMem(filtered);
+}
+
+async function loadDirectory() {
+  try {
+    const supabase = window._supabase;
+    if (!supabase) { setTimeout(loadDirectory, 100); return; }
+    const { data: profiles, error } = await supabase
+      .from('profiles')
+      .select('first_name, last_name, role')
+      .order('last_name', { ascending: true });
+    if (error) throw error;
+    MEM = (profiles || []).map(p => {
+      const first = p.first_name || '';
+      const last  = p.last_name  || '';
+      const role  = p.role || 'member';
+      return {
+        n: (first + ' ' + last).trim() || 'Unknown',
+        r: role.charAt(0).toUpperCase() + role.slice(1),
+        i: ((first[0] || '') + (last[0] || '')).toUpperCase() || '?',
+      };
+    });
+    renderMem(MEM);
+  } catch(e) {
+    console.warn('Directory load error:', e);
+  }
+}
+loadDirectory();
 
 document.querySelectorAll('.fchip').forEach(c => c.addEventListener('click', function() {
   this.closest('.dir-controls').querySelectorAll('.fchip').forEach(x => x.classList.remove('active'));
