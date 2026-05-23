@@ -1716,18 +1716,28 @@ async function doSignOut() {
 }
 
 // ── Load profile on page ready ───────────────
-window.addEventListener('load', async function() {
+async function loadProfile() {
   try {
     const supabase = window._supabase;
-    if (!supabase) return;
+    if (!supabase) { setTimeout(loadProfile, 100); return; }
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    const profile = window._profile;
+    if (!session) { window.location.href = 'login.html'; return; }
+    // Always fetch fresh from DB rather than relying on window._profile timing
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('first_name, last_name, role, phone, address, joined_date')
+      .eq('id', session.user.id)
+      .single();
     applyProfile(profile, session.user.email);
   } catch(e) {
     console.warn('Profile load error:', e);
   }
-});
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadProfile);
+} else {
+  loadProfile();
+}
 </script>
 </body>
 </html>
